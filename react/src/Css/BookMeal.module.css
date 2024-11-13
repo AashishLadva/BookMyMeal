@@ -1,0 +1,69 @@
+.mainn {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  z-index: 1;
+  width: 500px;
+  padding: 30px;
+  box-shadow: 0px 0px 40px 4000px rgba(0, 0, 0, 0.425);
+  /* display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; */
+  z-index: 1;
+  border-radius: 20px;
+  transition: all ease-in-out 1s;
+}
+
+.mainn header {
+  margin: 16px 0px;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+}
+.mainn h5 {
+  width: 90%;
+  font-weight: 600;
+}
+.mainn form .text-danger {
+  width: 10%;
+}
+.mainn .slogan h4 {
+  font-weight: 700;
+  margin: 20px 0px;
+}
+.mainn .slogan p {
+  font-weight: 600;
+  margin: 10px 0px;
+}
+.signin {
+  color: red;
+  cursor: pointer;
+}
+
+.radio {
+  float: left !important;
+  width: 25% !important;
+  color: black;
+}
+
+.hero {
+  background-image: url("../assets/background/cat-4.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.select-days{
+    /* width: 100%;
+    display: block; */
+}
+@media only screen and (max-width:575px){
+    .mainn{
+        width: 100%;
+        height: 480px;
+        top: 100%;
+    }
+    
+}
