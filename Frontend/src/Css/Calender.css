@@ -1,0 +1,29 @@
+.calendar-container {
+  display: flex !important;
+  font-size: 18px;
+  padding: 20px;
+  height: 60vh;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.calendar-container .MuiTypography-root {
+  font-size: 0.9rem !important;
+  padding: 1.2rem !important;
+  margin: 3px 5px;
+}
+.calendar-container .MuiPickersDay-root {
+  font-size: 0.96rem !important;
+  padding: 1.2rem !important;
+  margin: 3px 5px;
+}
+
+.Mui-selected {
+  background-color: #d2194a !important;
+  color: white;
+}
+
+.MuiPickersCalendarHeader-root {
+  font-size: 18px;
+}
+
