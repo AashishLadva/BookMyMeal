@@ -1,0 +1,17 @@
+.term-main{
+    width: 70%;
+   text-align: justify;
+    transition:all ease-in-out 0.5s;
+}
+h2{
+    margin:10px 0px;
+}
+.h5{
+    margin-top: 40px;
+}
+
+@media only screen and (max-width:1100px) {
+    .term-main{
+        width: 100%;
+    }
+}
