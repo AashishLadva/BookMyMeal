@@ -1,0 +1,390 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+@media only screen and (min-width: 992px) {
+    .left {
+        background-image: url("../assets/bg-sm.jpg");
+        flex: 0 0 50%;
+        width: 50%;
+        background-size: cover !important;
+        height: 100vh;
+        position: relative;
+      }
+      .main {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+      
+      .left div {
+        position: absolute;
+        left: 30%;
+        top: 45%;
+      }
+      img {
+        max-width: 100%;
+        
+      }
+      .photo2{
+        visibility: hidden;
+      }
+      .right {
+        width: 50%;
+        background-color: #fff;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rightIn {
+        min-width: 440px;
+        /* max-width: 440px; */
+        background-color: #fff;
+        transition: all 0.5s ease-in-out;
+        padding: 20px;
+        margin: 0 0 40px 0;
+      }
+      .rightIn form {
+        position: relative;
+      }
+      .rightIn form h2 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #000419;
+        text-align: left;
+        font-size: 28px;
+        font-weight: 700;
+      }
+      .rightIn form p {
+        color: rgba(0, 0, 0, 0.4);
+        text-align: left;
+        font-size: 15px;
+        font-weight: 400;
+        margin-bottom: 32px;
+      }
+      .userName {
+        margin-bottom: 15px;
+      }
+      .userName label {
+        color: #000419;
+        font-weight: 400;
+        font-size: 14px;
+        margin-bottom: 10px;
+        display: inline-block;
+      }
+      .userName label span {
+        color: #d13434;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      .password label span {
+        color: #d13434;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      .in {
+        border-radius: 12px;
+        background-color: rgba(196, 196, 241, 0.626);
+        padding: 10px 20px;
+      }
+      
+      .in input {
+        background-color: transparent;
+        width: 85%;
+        border: none;
+        outline: none;
+        box-shadow: none; 
+      }
+      input:focus {
+        outline: none;
+        border: none;
+        box-shadow: none;
+      }
+      .sh{
+        width:5%;
+        display:inline-block;
+        text-align:right;
+        }
+      
+      form .login-btn {
+        position: relative;
+        margin-top: 20px;
+        border-radius: 10px;
+        text-align: center;
+        width: 100%;
+        padding: 10px 0px;
+        background-color: white;
+        border: 2px solid red;
+        color: red;
+        transition: all ease-in-out 0.5s;
+        font-weight: 600;
+      }
+      form .login-btn:hover {
+        color: white;
+        background-color: red;
+        border: 2px solid white;
+      }
+      .forget{
+        color:#d13434;
+        margin-top: 15px;
+        text-align: right;
+        cursor: pointer;
+      }
+      
+  }
+
+
+@media (min-width:550px) and (max-width: 991px) {
+    .left {
+        background-image: url("../assets/bg-sm.jpg");
+        width: 100%;
+        display: block;
+        background-size: cover !important;
+        height: 50vh;
+        position: relative;
+        border-bottom-left-radius: 100px;
+        border-bottom-right-radius: 100px;
+        transition: all ease-in-out 0.5s;
+      }
+      .photo{
+        visibility: hidden;
+      }
+      .photo2{
+        position: absolute;
+        bottom: -55px;
+        width: auto;
+        left: 45%;
+        transition: all ease-in-out 0.5s;
+        z-index: 5;
+      }
+      .right {
+        margin-top: 40px;
+        width: 100%;
+        background-color: #fff;
+      }
+      .rightIn {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        background-color: #fff;
+        transition: all 0.5s ease-in-out;
+        
+        
+      }
+      .rightIn form {
+        position: relative;
+        min-width: 70%;
+      }
+      .rightIn form h2 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #000419;
+        text-align: left;
+        font-size: 28px;
+        font-weight: 700;
+      }
+      .rightIn form p {
+        color: rgba(0, 0, 0, 0.4);
+        text-align: left;
+        font-size: 15px;
+        font-weight: 400;
+        margin-bottom: 32px;
+      }
+      .userName {
+        margin-bottom: 15px;
+        width: 100%;
+      }
+      .userName label {
+        color: #000419;
+        font-weight: 400;
+        font-size: 14px;
+        margin-bottom: 10px;
+        display: inline-block;
+      }
+      .userName label span {
+        color: #d13434;
+        font-size: 20px;
+        font-weight: 600;
+      }
+      
+      .password label span {
+        color: #d13434;
+        font-size: 20px;
+        font-weight: 600;
+      }
+    
+      .in {
+        border-radius: 12px;
+        background-color: rgba(196, 196, 241, 0.626);
+        padding: 10px 20px;
+      }
+      .in input {
+        border-style: none;
+        background-color: transparent;
+        width: 70%; border: none;
+        outline: none;
+        box-shadow: none; 
+      }
+      input:focus {
+        outline: none;
+        border: none;
+        box-shadow: none;
+      }
+      .sh{
+        width:16%;
+        display:inline-block;
+        text-align:right;
+        }
+      .in input:active {
+        border-style: none;
+        background-color: transparent;
+      }
+      form .login-btn {
+        position: relative;
+        margin-top: 20px;
+        border-radius: 10px;
+        text-align: center;
+        width: 100%;
+        padding: 10px 0px;
+        background-color: white;
+        border: 2px solid red;
+        color: red;
+        transition: all ease-in-out 0.5s;
+        font-weight: 600;
+      }
+      form .login-btn:hover {
+        color: white;
+        background-color: red;
+        border: 2px solid white;
+      }
+      
+  
+}
+@media only screen and (max-width: 550px) {
+  .left {
+      background-image: url("../assets/bg-sm.jpg");
+      width: 100%;
+      display: block;
+      background-size: cover !important;
+      height: 50vh;
+      position: relative;
+      border-bottom-left-radius: 50px;
+      transition: all ease-in-out 0.5s;
+      border-bottom-right-radius: 50px;
+    }
+    .photo{
+      visibility: hidden;
+    }
+    .photo2{
+      position: absolute;
+      bottom: -55px;
+      width: auto;
+      left: 38%;
+      z-index: 5;
+      transition: all ease-in-out 0.5s;
+    }
+    .right {
+      margin-top: 40px;
+      width: 100%;
+      background-color: #fff;
+    }
+    .rightIn {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      background-color: #fff;
+      transition: all 0.5s ease-in-out;
+      
+      
+    }
+    .rightIn form {
+      position: relative;
+      min-width: 70%;
+    }
+    .rightIn form h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #000419;
+      text-align: left;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .rightIn form p {
+      color: rgba(0, 0, 0, 0.4);
+      text-align: left;
+      font-size: 15px;
+      font-weight: 400;
+      margin-bottom: 32px;
+    }
+    .userName {
+      margin-bottom: 15px;
+      width: 100%;
+    }
+    .userName label {
+      color: #000419;
+      font-weight: 400;
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+    .userName label span {
+      color: #d13434;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    
+    .password label span {
+      color: #d13434;
+      font-size: 20px;
+      font-weight: 600;
+    }
+  
+    .in {
+      border-radius: 12px;
+      background-color: rgba(196, 196, 241, 0.626);
+      padding: 10px 20px;
+    }
+    .in input {
+      border-style: none;
+      background-color: transparent;
+      width: 70%; border: none;
+      outline: none;
+      box-shadow: none; 
+    }
+    input:focus {
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+    .sh{
+      width:16%;
+      display:inline-block;
+      text-align:right;
+      }
+    .in input:active {
+      border-style: none;
+      background-color: transparent;
+    }
+    form .login-btn {
+      position: relative;
+      margin-top: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 100%;
+      padding: 10px 0px;
+      background-color: white;
+      border: 2px solid red;
+      color: red;
+      transition: all ease-in-out 0.5s;
+      font-weight: 600;
+    }
+    form .login-btn:hover {
+      color: white;
+      background-color: red;
+      border: 2px solid white;
+    }
+    
+
+}
