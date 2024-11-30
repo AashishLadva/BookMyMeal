@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: BookMyMeal
+  datasource:
+    url: jdbc:mysql://localhost:3306/Project
+    username: root
+    password: Jaydeep@77
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
