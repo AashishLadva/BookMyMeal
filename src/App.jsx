@@ -16,7 +16,6 @@ import About from "./Pages/About";
 import TermAndCondition from "./Pages/TermAndCondition";
 import ValidationsAndItemsProvider from "./Utils/ValidationsAndItemsProvider";
 import Cookies from "js-cookie";
-import { useEffect } from "react";
 
 const ProtectRoute = ({ children }) => {
   const cookie = Cookies.get("UserCookie");
