@@ -44,10 +44,15 @@ public class MealBookingController {
         try {
             mealBookingService.cancelBooking(employeeId, mealId, date);
             return new ResponseEntity<>("Meal cancelled successfully!", HttpStatus.OK);
+        } catch (IllegalStateException ex) {
+            // Handle already canceled booking scenario
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
         } catch (RuntimeException ex) {
+            // Handle generic errors like booking not found
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @GetMapping("/view-booking/{employeeID}/{mealID}")
     public ResponseEntity<?> viewBooking(@PathVariable("employeeID") Long employeeID,

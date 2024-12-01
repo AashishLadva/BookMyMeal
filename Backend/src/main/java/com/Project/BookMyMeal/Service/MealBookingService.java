@@ -4,8 +4,10 @@ import com.Project.BookMyMeal.DTO.BookingDTO;
 import com.Project.BookMyMeal.Entity.*;
 import com.Project.BookMyMeal.Repository.*;
 import com.Project.BookMyMeal.Util.CouponCodeGenerator;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,6 +31,9 @@ public class MealBookingService {
     @Autowired
     private HolidaysRepository holidaysRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public boolean isWeekend(LocalDate date) {
         // Check if the day is Saturday or Sunday
         return date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY;
@@ -41,65 +46,96 @@ public class MealBookingService {
 
     @Transactional
     public void bookMeal(Integer employeeId, Integer mealId, LocalDate startDate, LocalDate endDate) {
-        // Fetch employee and meal from repository
         Employee employee = employeeRepository.findById((long) employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         Meal meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new RuntimeException("Meal not found"));
 
-        // Process each day between startDate and endDate
+        boolean isBookingSuccessful = false;
         LocalDate currentDate = startDate;
+
         while (!currentDate.isAfter(endDate)) {
-            // Check if there's an existing booking for the current date
             MealBooking existingBooking = mealBookingRepository.findByEmployee_IdAndMeal_IdAndBookingDate(
                     employee.getId(), meal.getId(), currentDate).orElse(null);
 
             if (existingBooking != null) {
-                // If the booking exis+ts and the status is CANCELLED, update it to BOOKED
                 if (existingBooking.getStatus() == MealBooking.BookingStatus.CANCELLED) {
+                    // Status change: Update from CANCELLED to BOOKED
                     existingBooking.setStatus(MealBooking.BookingStatus.BOOKED);
-                    existingBooking.setCouponCode(CouponCodeGenerator.generateCouponCode());
+
+                    // Generate a unique coupon code if needed
+                    String newCouponCode;
+                    do {
+                        newCouponCode = CouponCodeGenerator.generateCouponCode();
+                    } while (mealBookingRepository.existsByCouponCode(newCouponCode));
+
+                    existingBooking.setCouponCode(newCouponCode);
                     mealBookingRepository.save(existingBooking);
+                    isBookingSuccessful = true;
                 } else {
-                    // If the meal is already booked and not cancelled, throw an error
                     throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                             "Meal for this date is already booked!");
                 }
             } else {
-                // If no booking exists for the date, create a new one
                 if (!isWeekend(currentDate) && !isHoliday(currentDate)) {
-                    // Generate a coupon code for the meal booking
-                    String couponCode = CouponCodeGenerator.generateCouponCode();
+                    // Create a new booking
+                    String couponCode;
+                    do {
+                        couponCode = CouponCodeGenerator.generateCouponCode();
+                    } while (mealBookingRepository.existsByCouponCode(couponCode));
 
-                    // Create a new meal booking entry for the current date
                     MealBooking mealBooking = new MealBooking();
                     mealBooking.setEmployee(employee);
                     mealBooking.setMeal(meal);
                     mealBooking.setBookingDate(currentDate);
                     mealBooking.setCouponCode(couponCode);
-                    mealBooking.setStatus(MealBooking.BookingStatus.BOOKED); // Set status as BOOKED
+                    mealBooking.setStatus(MealBooking.BookingStatus.BOOKED);
 
-                    // Save the meal booking
                     mealBookingRepository.save(mealBooking);
+                    isBookingSuccessful = true;
                 }
             }
 
-            // Move to the next day
             currentDate = currentDate.plusDays(1);
+        }
+
+        if (isBookingSuccessful) {
+            String subject = "Meal Booking Confirmation";
+            String body = String.format(
+                    "Your meal '%s' has been successfully booked for the date range: %s - %s.",
+                    meal.getMealType(), startDate, endDate);
+
+            try {
+                emailService.sendEmail(employee.getEmail(), subject, body);
+            } catch (MessagingException e) {
+                System.err.println("Failed to send booking confirmation email: " + e.getMessage());
+            }
         }
     }
 
-
+    @Transactional
     public void cancelBooking(Long employeeId, Integer mealId, LocalDate date) {
-        // Fetch the meal booking based on employee ID, meal ID, and booking date
         MealBooking mealBooking = mealBookingRepository.findByEmployee_IdAndMeal_IdAndBookingDate(employeeId, mealId, date)
                 .orElseThrow(() -> new RuntimeException("Booking not found for the specific date."));
 
-        // Set the booking status as CANCELLED
+        if (mealBooking.getStatus() == MealBooking.BookingStatus.CANCELLED) {
+            throw new IllegalStateException("Meal is not found for this date.");
+        }
+
         mealBooking.setStatus(MealBooking.BookingStatus.CANCELLED);
         mealBookingRepository.save(mealBooking);
 
+        String userEmail = mealBooking.getEmployee().getEmail();
+        String mealName = String.valueOf(mealBooking.getMeal().getMealType());
+        String subject = "Meal Booking Cancellation";
+        String body = String.format("Your meal booking for '%s' on %s has been successfully canceled.", mealName, date);
+
+        try {
+            emailService.sendEmail(userEmail, subject, body);
+        } catch (MessagingException e) {
+            System.err.println("Failed to send email: " + e.getMessage());
+        }
     }
 
 

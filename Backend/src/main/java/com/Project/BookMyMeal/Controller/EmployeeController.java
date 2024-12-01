@@ -1,50 +1,90 @@
 package com.Project.BookMyMeal.Controller;
 
+import com.Project.BookMyMeal.DTO.ChangePasswordDTO;
 import com.Project.BookMyMeal.Entity.Employee;
 import com.Project.BookMyMeal.Service.EmployeeService;
+import com.Project.BookMyMeal.Util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/employees")
-@CrossOrigin(origins = "http://localhost:5173")
 @Slf4j
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @PostMapping("/add")
-    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<?> addEmployee(@RequestBody Employee employee) {
         try {
             Employee savedEmployee = employeeService.saveEmployee(employee);
-            return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED); // Respond with the saved entity and status 201 (Created)
         } catch (Exception e) {
+            // Log the exception for debugging purposes
             log.error("Error adding employee", e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred while adding employee", HttpStatus.INTERNAL_SERVER_ERROR); // Respond with a generic error message and status 500
         }
     }
 
+
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Employee employee) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        String email = credentials.get("email");
+        String password = credentials.get("password");
+
         try {
-            boolean isAuthenticated = employeeService.authenticate(employee.getEmail(), employee.getPassword());
+            boolean isAuthenticated = employeeService.authenticate(email, password);
+
             if (isAuthenticated) {
-                Optional<Employee> employeeByUserEmail = employeeService.getEmployeeByUserEmail(employee.getEmail());
-                return new ResponseEntity<>(employeeByUserEmail.get(), HttpStatus.OK);
+                // Retrieve the authenticated employee
+                Employee employee = employeeService.findByEmail(email);
+
+                if (employee != null) {
+                    String token = jwtUtil.generateToken(email);
+
+                    // Prepare the response with token, userId, and userName
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("token", token);
+                    response.put("userId", employee.getId()); // Assuming getId() returns the employee ID
+                    response.put("userName", employee.getName()); // Assuming getName() returns the employee name
+
+                    return ResponseEntity.ok(response);
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Employee not found");
+                }
             } else {
-                // Authentication failed
-                return new ResponseEntity<>("Invalid credentials", HttpStatus.UNAUTHORIZED);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
             }
         } catch (Exception e) {
-            log.error("Login failed", e);
-            return new ResponseEntity<>("Login failed", HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Login failed");
+        }
+    }
+
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+        try {
+            String responseMessage = employeeService.changePassword(
+                    changePasswordDTO.getEmployeeId(),
+                    changePasswordDTO.getCurrentPassword(),
+                    changePasswordDTO.getNewPassword()
+            );
+            return ResponseEntity.ok(responseMessage);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(400).body(ex.getMessage());
         }
     }
 

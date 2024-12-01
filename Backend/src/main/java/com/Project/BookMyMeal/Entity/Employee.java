@@ -26,11 +26,10 @@ public class Employee {
     @Column(nullable = false, length = 50)
     private String role;
 
-    @Column(name = "doj", nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "doj")
     private LocalDate doj;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String password;
 }
 

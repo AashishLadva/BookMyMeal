@@ -33,31 +33,6 @@ CREATE TABLE meal_bookings (
     UNIQUE (employee_id, meal_id, booking_date)
 );
 
-
--- Meal Bookings Table
-CREATE TABLE meal_bookings (
-    id integer AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for the booking
-    employee_id bigint NOT NULL, -- ID of the employee making the booking
-    meal_id integer NOT NULL, -- ID of the meal type (e.g., breakfast, lunch, dinner)
-    status ENUM('ACTIVE', 'CANCELLED') DEFAULT 'ACTIVE', -- Booking status
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for creation
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Timestamp for updates
-    FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE CASCADE, -- Ensure referential integrity
-    FOREIGN KEY (meal_id) REFERENCES meals(id) ON DELETE CASCADE -- Ensure referential integrity
-);
-
-CREATE TABLE meal_booking_dates (
-    id integer AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each booking date
-    booking_id integer NOT NULL, -- References the meal_bookings table
-    booking_date DATE NOT NULL, -- Specific date for the meal
-    coupon_code VARCHAR(255) UNIQUE NOT NULL, -- Unique coupon for each date
-    status ENUM('BOOKED', 'CANCELLED') DEFAULT 'BOOKED', -- Date-specific booking status
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for creation
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Timestamp for updates
-    FOREIGN KEY (booking_id) REFERENCES meal_bookings(id) ON DELETE CASCADE, -- Ensure referential integrity
-    UNIQUE (booking_id, booking_date) -- Prevent duplicate dates for the same booking
-);
-
 CREATE TABLE Holidays (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     date DATE NOT NULL
@@ -66,67 +41,53 @@ CREATE TABLE Holidays (
 CREATE TABLE Menu (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     day_of_week VARCHAR(255) NOT NULL,
-    meal_time ENUM('Lunch', 'Dinner') NOT NULL,
+    meal_type ENUM('LUNCH', 'DINNER') NOT NULL,
     dish_name VARCHAR(255) NOT NULL
 );
 
 -- drop table Menu;
 
-INSERT INTO Menu (day_of_week, meal_time, dish_name) VALUES
--- Sunday
-('Sunday', 'Lunch', 'Bajra Rotla'),
-('Sunday', 'Lunch', 'Ringan no Olo'),
-('Sunday', 'Lunch', 'Chaas'),
-('Sunday', 'Lunch', 'Gujarati Kadhi'),
-('Sunday', 'Dinner', 'Sev Tameta nu Shaak'),
-('Sunday', 'Dinner', 'Bhakhri'),
-('Sunday', 'Dinner', 'Kachumber Salad'),
+INSERT INTO Menu (day_of_week, meal_type, dish_name) VALUES
 -- Monday
-('Monday', 'Lunch', 'Thepla'),
-('Monday', 'Lunch', 'Gathiya nu Shaak'),
-('Monday', 'Lunch', 'Khichdi'),
-('Monday', 'Lunch', 'Achar'),
-('Monday', 'Dinner', 'Dhokli nu Shaak'),
-('Monday', 'Dinner', 'Jeera Rice'),
-('Monday', 'Dinner', 'Papad'),
+('Monday', 'LUNCH', 'Thepla'),
+('Monday', 'LUNCH', 'Gathiya nu Shaak'),
+('Monday', 'LUNCH', 'Khichdi'),
+('Monday', 'LUNCH', 'Achar'),
+('Monday', 'DINNER', 'Dhokli nu Shaak'),
+('Monday', 'DINNER', 'Jeera Rice'),
+('Monday', 'DINNER', 'Papad'),
 -- Tuesday
-('Tuesday', 'Lunch', 'Methi na Thepla'),
-('Tuesday', 'Lunch', 'Lasaniya Bataka'),
-('Tuesday', 'Lunch', 'Rajwadi Kadhi'),
-('Tuesday', 'Lunch', 'Chutney'),
-('Tuesday', 'Dinner', 'Undhiyu'),
-('Tuesday', 'Dinner', 'Puri'),
-('Tuesday', 'Dinner', 'Sweet Jalebi'),
+('Tuesday', 'LUNCH', 'Methi na Thepla'),
+('Tuesday', 'LUNCH', 'Lasaniya Bataka'),
+('Tuesday', 'LUNCH', 'Rajwadi Kadhi'),
+('Tuesday', 'LUNCH', 'Chutney'),
+('Tuesday', 'DINNER', 'Undhiyu'),
+('Tuesday', 'DINNER', 'Puri'),
+('Tuesday', 'DINNER', 'Sweet Jalebi'),
 -- Wednesday
-('Wednesday', 'Lunch', 'Khichu'),
-('Wednesday', 'Lunch', 'Ringana Bateta nu Shaak'),
-('Wednesday', 'Lunch', 'Masala Chaas'),
-('Wednesday', 'Dinner', 'Rotli'),
-('Wednesday', 'Dinner', 'Vagharelo Rotlo'),
-('Wednesday', 'Dinner', 'Gujarati Dal'),
+('Wednesday', 'LUNCH', 'Bajra Rotla'),
+('Wednesday', 'LUNCH', 'Ringan no Olo'),
+('Wednesday', 'LUNCH', 'Chaas'),
+('Wednesday', 'LUNCH', 'Gujarati Kadhi'),
+('Wednesday', 'DINNER', 'Sev Tameta nu Shaak'),
+('Wednesday', 'DINNER', 'Bhakhri'),
+('Wednesday', 'DINNER', 'Kachumber Salad'),
 -- Thursday
-('Thursday', 'Lunch', 'Masala Rotla'),
-('Thursday', 'Lunch', 'Val ni Dal'),
-('Thursday', 'Lunch', 'Chaash'),
-('Thursday', 'Dinner', 'Patra'),
-('Thursday', 'Dinner', 'Pulao with Cashew Nuts'),
-('Thursday', 'Dinner', 'Tomato Chutney'),
+('Thursday', 'LUNCH', 'Masala Rotla'),
+('Thursday', 'LUNCH', 'Val ni Dal'),
+('Thursday', 'LUNCH', 'Chaash'),
+('Thursday', 'DINNER', 'Patra'),
+('Thursday', 'DINNER', 'Pulao with Cashew Nuts'),
+('Thursday', 'DINNER', 'Tomato Chutney'),
 -- Friday
-('Friday', 'Lunch', 'Makai no Chevdo'),
-('Friday', 'Lunch', 'Bhinda nu Shaak'),
-('Friday', 'Lunch', 'Bajra Rotla'),
-('Friday', 'Lunch', 'Jaggery and White Butter'),
-('Friday', 'Dinner', 'Dhokla'),
-('Friday', 'Dinner', 'Lasaniya Chutney'),
-('Friday', 'Dinner', 'Kadhi Khichdi'),
--- Saturday
-('Saturday', 'Lunch', 'Rotli'),
-('Saturday', 'Lunch', 'Gujarati Kadhi'),
-('Saturday', 'Lunch', 'Bateta nu Shaak'),
-('Saturday', 'Lunch', 'Chaas'),
-('Saturday', 'Dinner', 'Muthiya'),
-('Saturday', 'Dinner', 'Dal Dhokli'),
-('Saturday', 'Dinner', 'Papad');
+('Friday', 'LUNCH', 'Makai no Chevdo'),
+('Friday', 'LUNCH', 'Bhinda nu Shaak'),
+('Friday', 'LUNCH', 'Bajra Rotla'),
+('Friday', 'LUNCH', 'Jaggery and White Butter'),
+('Friday', 'DINNER', 'Dhokla'),
+('Friday', 'DINNER', 'Lasaniya Chutney'),
+('Friday', 'DINNER', 'Kadhi Khichdi');
+
 
 
 
@@ -160,6 +121,7 @@ select * from meals;
 select * from meal_booking_dates;
 select * from meal_bookings;
 select * from employee;
+select * from menu;
 
 update meals set meal_type="DINNER" where meal_type="dinner";
 
@@ -183,5 +145,27 @@ update employee set email = "aashishladva@gmail.com" where id=1;
 SELECT * FROM employee;
 
 
+-- Meal Bookings Table
+CREATE TABLE meal_bookings (
+    id integer AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for the booking
+    employee_id bigint NOT NULL, -- ID of the employee making the booking
+    meal_id integer NOT NULL, -- ID of the meal type (e.g., breakfast, lunch, dinner)
+    status ENUM('ACTIVE', 'CANCELLED') DEFAULT 'ACTIVE', -- Booking status
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for creation
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Timestamp for updates
+    FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE CASCADE, -- Ensure referential integrity
+    FOREIGN KEY (meal_id) REFERENCES meals(id) ON DELETE CASCADE -- Ensure referential integrity
+);
 
+CREATE TABLE meal_booking_dates (
+    id integer AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each booking date
+    booking_id integer NOT NULL, -- References the meal_bookings table
+    booking_date DATE NOT NULL, -- Specific date for the meal
+    coupon_code VARCHAR(255) UNIQUE NOT NULL, -- Unique coupon for each date
+    status ENUM('BOOKED', 'CANCELLED') DEFAULT 'BOOKED', -- Date-specific booking status
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for creation
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Timestamp for updates
+    FOREIGN KEY (booking_id) REFERENCES meal_bookings(id) ON DELETE CASCADE, -- Ensure referential integrity
+    UNIQUE (booking_id, booking_date) -- Prevent duplicate dates for the same booking
+);
 

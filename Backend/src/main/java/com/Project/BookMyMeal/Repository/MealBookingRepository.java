@@ -16,6 +16,10 @@ public interface MealBookingRepository extends JpaRepository<MealBooking, Intege
     Optional<MealBooking> findByEmployee_IdAndMeal_IdAndBookingDate(Long employeeId, Integer mealId, LocalDate bookingDate);
 
     List<MealBooking> findByEmployee_Id(Long employeeId);
+
+    boolean existsByCouponCode(String newCouponCode);
+
+    Optional<MealBooking> findByEmployee_IdAndMealIdAndBookingDate(Long employeeId, Integer mealId, LocalDate date);
 }
 
 
