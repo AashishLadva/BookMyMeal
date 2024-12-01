@@ -1,25 +1,23 @@
 import React, { useState } from "react";
 import Styles from "../Css/ChangePassword.module.css";
-import { ToastContainer, toast, Bounce } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PasswordInput from "../Components/PasswordInput";
 import Button from "../Components/Button";
 import { toastStyle } from "../Constants/general";
 import { useContext } from "react";
 import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
+import axios from "axios";
+import cookies from 'js-cookie';
 
 const ChangePassword = () => {
-  const { validateChangePassword } = useContext(contextProvider);
+  const { validateChangePassword, isAuthenticate } =
+    useContext(contextProvider);
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
   const [oldPassword, setOldPassword] = useState();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateChangePassword(oldPassword, password, confirmPassword)) {
-      toast.success("submitted successful!", toastStyle);
-    }
-  };
+  const {id} = JSON.parse(cookies.get("UserCookie"));
+  const [loading, setLoading] = useState(false);
 
   const InputData = [
     {
@@ -47,6 +45,37 @@ const ChangePassword = () => {
       onChange: (e) => setConfirmPassword(e.target.value),
     },
   ];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (
+      validateChangePassword(oldPassword, password, confirmPassword) &&
+      isAuthenticate()
+    ) {
+      const data = {employeeId:id,currentPassword:oldPassword,newPassword:password};
+      try {
+        setLoading(true);
+        const response = await axios.post(
+          "http://localhost:8080/employees/changePassword",
+          data
+        );
+        if(response.status===200){
+          toast.success(response.data,toastStyle);
+        }
+      } catch (error) {
+        if (error.response) {
+          toast.error(
+            (error.response?.data || error.message),
+            toastStyle
+          );
+        } else {
+          toast.error(error.message, toastStyle);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <>
