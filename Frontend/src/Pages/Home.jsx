@@ -16,6 +16,8 @@ import axios from "axios";
 import Cookie from "js-cookie";
 import Spinner from "../Components/Spinner";
 import QrCode from "./QrCode";
+import { ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const todayDateTime = dayjs();
@@ -23,13 +25,14 @@ const Home = () => {
   const [openViewBooking, setOpenViewBooking] = useState(false);
   const [selectedDate, setselectedDate] = useState(todayDateTime);
   const [quickMeal, setQuickMeal] = useState(false);
-  const { isWeekend } = useContext(contextProvider);
+  const { isWeekend,isAuthenticate } = useContext(contextProvider);
   const [bookedDate, setBookedDate] = useState([]);
-  const { id } = JSON.parse(Cookie.get("UserCookie"));
+  const { id,userName } = JSON.parse(Cookie.get("UserCookie"));
   const [loading, setLoading] = useState(false);
   const [refreshData, setRefreshData] = useState(false);
   const [showQr, setShowQr] = useState(false);
-  
+  const [coupen,setCoupen] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMealBookings = async () => {
@@ -105,6 +108,35 @@ const Home = () => {
     return false;
   };
 
+
+  const fetchQr = async() =>{
+    if(isAuthenticate()){
+      try{
+        setLoading(true);
+        const response  = await axios.get(`http://localhost:8080/coupons/getCouponDetails/${id}/${hasLunch?1:2}/${selectedDate.format("YYYY-MM-DD")}`)
+        if(response.status===200){
+          setShowQr(true);
+          setCoupen(response.data);
+        }
+      }catch(error){
+        if (error.response) {
+          toast.error(
+            (error.response?.data || error.message),
+            toastStyle
+          );
+        } else {
+          toast.error(error.message, toastStyle);
+        }
+      }finally{
+        setLoading(false);
+      }
+    }
+    else{9
+      setTimeout(()=>{
+        navigate('/login')
+      },1500)
+    }
+  }
   return (
     <>
       {openViewBooking && (
@@ -163,10 +195,10 @@ const Home = () => {
               <Button
                 buttonName="Show QR"
                 className="btn btn-outline-danger border-2 animate__animated animate__fadeInUp"
-                onClick={() => setShowQr(true)}
+                onClick={fetchQr}
               />
             ) : null}
-            {showQr && <QrCode stopQr={() => setShowQr(false)} />}
+            {showQr && <QrCode id={id} hasLunch={hasLunch} coupen={coupen} userName={userName} stopQr={() => setShowQr(false)} />}
             <MealOfTheDay selectedDate={selectedDate} />
           </div>
         </div>

@@ -15,12 +15,14 @@ const Navbar = () => {
   const closeBtn = useRef(null);
   const { navItems } = useContext(contextProvider);
   const { userName } = JSON.parse(cookies.get("UserCookie"));
+  
 
   const handleOnClose = () => {
     closeBtn.current.click();
   };
   const handleLogoutBtn = () => {
     cookies.remove("UserCookie");
+    sessionStorage.removeItem("authToken");
     navigate("/login");
   };
 

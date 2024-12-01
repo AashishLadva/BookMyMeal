@@ -1,12 +1,13 @@
 import Button from "../Components/Button";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Styles from "../Css/CancelPopup.module.css";
-import InputField from "../Components/InputField";
 import axios from "axios";
 import cookie from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
-import { SuccessToast, toastStyle } from "../Constants/general";
+import { toastStyle } from "../Constants/general";
 import Spinner from "../Components/Spinner";
+import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
+import { useNavigate } from "react-router-dom";
 
 const CancelPopup = ({
   handleCloseCancel,
@@ -14,33 +15,41 @@ const CancelPopup = ({
   onCancel,
   mealType,
 }) => {
+  const { isAuthenticate } = useContext(contextProvider);
   const { id } = JSON.parse(cookie.get("UserCookie"));
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const response = await axios.post(
-        `http://localhost:8080/meal-booking/cancel/${id}/${
-          mealType === "LUNCH" ? 1 : 2
-        }/${selectedDate.format("YYYY-MM-DD")}`
-      );
-      if (response.status === 200) {
-        toast.success(response.data, SuccessToast);
-        setTimeout(() => {
-          handleCloseCancel();
-          onCancel();
-        }, 1800);
+    if (isAuthenticate()) {
+      try {
+        setLoading(true);
+        const response = await axios.post(
+          `http://localhost:8080/meal-booking/cancel/${id}/${
+            mealType === "LUNCH" ? 1 : 2
+          }/${selectedDate.format("YYYY-MM-DD")}`
+        );
+        if (response.status === 200) {
+          toast.success(response.data, toastStyle);
+          setTimeout(() => {
+            handleCloseCancel();
+            onCancel();
+          }, 1800);
+        }
+      } catch (error) {
+        if (error.status === 400) {
+          const errorMessage =
+            error.response?.data || "Something went wrong! Please try again.";
+          toast.error(errorMessage, toastStyle);
+        }
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      if (error.status === 400) {
-        const errorMessage =
-          error.response?.data || "Something went wrong! Please try again.";
-        toast.error(errorMessage, toastStyle);
-      }
-    } finally {
-      setLoading(false);
+    } else {
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
     }
   };
   return (

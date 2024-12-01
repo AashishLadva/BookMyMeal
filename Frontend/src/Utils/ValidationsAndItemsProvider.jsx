@@ -8,6 +8,8 @@ import { FaHome } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { PiWarningCircleFill } from "react-icons/pi";
 import { MdPrivacyTip } from "react-icons/md";
+import { jwtDecode } from "jwt-decode";
+import cookies from "js-cookie";
 
 export const contextProvider = createContext({
   validateUserEmail: () => {},
@@ -16,8 +18,10 @@ export const contextProvider = createContext({
   isWeekend: () => {},
   navItems: [],
   isBookingDinner: () => {},
-  isBookingLunch: () => {}
+  isBookingLunch: () => {},
+  isAuthenticate: () => {},
 });
+
 const validateUserEmail = (userEmail) => {
   const userEmailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!userEmail) {
@@ -79,13 +83,15 @@ const validateChangePassword = (oldPassword, password, confirmPassword) => {
 
 const holidays = [];
 
-const fetchHoliday = async()=>{
-  const response = await fetch('http://localhost:8080/meal-booking/getHolidays');
-  const result  = await response.json();
-  if(response.status===200){
-    result.map((item)=>holidays.push(dayjs(item)))
+const fetchHoliday = async () => {
+  const response = await fetch(
+    "http://localhost:8080/meal-booking/getHolidays"
+  );
+  const result = await response.json();
+  if (response.status === 200) {
+    result.map((item) => holidays.push(dayjs(item)));
   }
-}
+};
 fetchHoliday();
 
 const isWeekend = (date) => {
@@ -124,8 +130,33 @@ const isBookingLunch = () => {
   return now.isBefore(cutoffTime);
 };
 
+const isAuthenticate = () => {
+  const token = sessionStorage.getItem("authToken");
+  if (!token) {
+    toast.error("No token found. Please log in again.", toastStyle);
+    return false;
+  }
+
+  try {
+    const decodedToken = jwtDecode(token);
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (decodedToken.exp > currentTime) {
+      return true;
+    } else {
+      toast.error("Session expired. Please log in again.", toastStyle);
+      cookies.remove("UserCookie");
+      sessionStorage.removeItem("authToken");
+      return false;
+    }
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    toast.error("Invalid token. Please log in again.", toastStyle);
+    cookies.remove("UserCookie");
+    sessionStorage.removeItem("authToken");
+    return false;
+  }
+};
 const ValidationsAndItemsProvider = ({ children }) => {
-  
   return (
     <contextProvider.Provider
       value={{
@@ -136,7 +167,7 @@ const ValidationsAndItemsProvider = ({ children }) => {
         navItems,
         isBookingDinner,
         isBookingLunch,
-        
+        isAuthenticate,
       }}
     >
       {children}

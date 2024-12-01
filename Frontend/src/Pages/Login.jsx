@@ -9,59 +9,70 @@ import InputField from "../Components/InputField";
 import Button from "../Components/Button";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { BiHide, BiShow } from "react-icons/bi";
-import {  useLocation, useNavigate } from "react-router-dom";
-import { SuccessToast, toastStyle } from "../Constants/general";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toastStyle } from "../Constants/general";
 import { useContext } from "react";
 import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
-import cookies from 'js-cookie';
-import axios from 'axios';
+import cookies from "js-cookie";
+import axios from "axios";
 import Spinner from "../Components/Spinner";
 
-
 const Login = () => {
-  const {validateUserEmail,validatePassword} = useContext(contextProvider);
-  const [showPassword,setShawPassword] =useState(false);
-  const navigate = useNavigate('');
+  const { validateUserEmail, validatePassword } =
+    useContext(contextProvider);
+  const [showPassword, setShawPassword] = useState(false);
+  const navigate = useNavigate("");
   const [userEmail, setUserEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const visible = () => {
-    setShawPassword((prev)=>!prev);
+    setShawPassword((prev) => !prev);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateUserEmail(userEmail) && validatePassword(password)) {
-      const data={email:userEmail,password:password};
+      const data = { email: userEmail, password: password };
       setLoading(true);
-      try{
-        const response  = await axios.post( "http://localhost:8080/employees/login",data);
-        if(response.status === 200){
-        cookies.set("UserCookie", JSON.stringify({id:response.data.id,userName:response.data.name}) );
-        toast.success("Login successful!", SuccessToast);
-        setTimeout(()=>{
-          navigate("/");
-        },1500);
-      }else{
-        toast.error(response.message, toastStyle);
-      }}
-      catch(error){
-        if (error.status === 400) {
-          const errorMessage =
-            error.response?.data || "Something went wrong! Please try again.";
-          toast.error(errorMessage, toastStyle);
-        } else if(error.status === 401){
-          const errorMessage =
-            error.response?.data || "Please check Email end password";
-          toast.error(errorMessage, toastStyle);
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/employees/login",
+          data
+        );
+        if (response.status === 200) {
+          cookies.set(
+            "UserCookie",
+            JSON.stringify({
+              id: response.data.userId,
+              userName: response.data.userName,
+            }),
+            { secure: true, sameSite: "Strict" }
+          );
+          sessionStorage.setItem("authToken", response.data.token);
+         toast.success("Login Successful!", toastStyle)
+          setTimeout(()=>{
+            navigate("/");
+          },1500)
+          
+        } else {
+          toast.error(response.message, toastStyle);
         }
-        else{
-          toast.error(error.message,toastStyle)
+      } catch (error) {
+        if (error.response?.status === 400) {
+          const errorMessage =
+            error.response.data || "Something went wrong! Please try again.";
+          toast.error(errorMessage, toastStyle);
+        } else if (error.response?.status === 401) {
+          const errorMessage =
+            error.response.data || "Please check Email and Password";
+          toast.error(errorMessage, toastStyle);
+        } else {
+          toast.error(error.message, toastStyle);
         }
-      }finally{
+      } finally {
         setLoading(false);
-      } 
+      }
     }
   };
   const location = useLocation();
@@ -99,7 +110,7 @@ const Login = () => {
                     value={userEmail}
                     id="Useremail"
                     name="Useremail"
-                    className='mx-2'
+                    className="mx-2"
                     onChange={(e) => setUserEmail(e.target.value)}
                   ></InputField>
                 </div>
@@ -114,27 +125,30 @@ const Login = () => {
                 <div className={Styles.in}>
                   <RiLockPasswordLine />
                   <InputField
-                    type={showPassword?"text":"password"}
+                    type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     id="password"
                     name="password"
                     value={password}
-                    className='mx-2'
-                    onChange={(e)=>setPassword(e.target.value)}
+                    className="mx-2"
+                    onChange={(e) => setPassword(e.target.value)}
                   ></InputField>
                   <div className={Styles.sh} id="see" onClick={visible}>
-                    {showPassword?<BiHide />:<BiShow />}
+                    {showPassword ? <BiHide /> : <BiShow />}
                   </div>
                 </div>
               </div>
-              <Button type="submit" className={`${Styles["login-btn"]} mb-4`} buttonName="Login" />
+              <Button
+                type="submit"
+                className={`${Styles["login-btn"]} mb-4`}
+                buttonName="Login"
+              />
             </form>
           </div>
         </div>
       </div>
       <ToastContainer />
       {loading && <Spinner />}
-      
     </>
   );
 };

@@ -14,17 +14,17 @@ import { LicenseInfo } from "@mui/x-license-pro";
 import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import InputField from "../Components/InputField";
 import cookies from "js-cookie";
-import { SuccessToast } from "../Constants/general";
 import { ToastContainer, toast } from "react-toastify";
 import { toastStyle } from "../Constants/general";
 import axios from "axios";
 import Spinner from "../Components/Spinner";
+import { useNavigate } from "react-router-dom";
 
 const BookMeal = ({ closePopUp }) => {
   LicenseInfo.setLicenseKey(
     "e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y"
   );
-  const { isWeekend, isBookingDinner, isBookingLunch } =
+  const { isWeekend, isBookingDinner, isBookingLunch, isAuthenticate } =
     useContext(contextProvider);
   const [startDate, setStartDate] = useState(null);
   const [mealType, setMealType] = useState("Lunch");
@@ -33,6 +33,7 @@ const BookMeal = ({ closePopUp }) => {
   const today = dayjs().add(1, "day");
   const maxDate = dayjs().add(3, "month");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (date) => {
     const [start, end] = date;
@@ -72,42 +73,48 @@ const BookMeal = ({ closePopUp }) => {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
+  
     if (!startDate || !endDate) {
       toast.error("Please fill all fields", toastStyle);
       return;
     }
-    setLoading(true);
-    try {
-      const data = {
-        employeeId: id,
-        mealId: parseInt(mealType === "Lunch" ? 1 : 2),
-        startDate: startDate.format("YYYY-MM-DD"),
-        endDate: endDate.format("YYYY-MM-DD"),
-      };
-      const response = await axios.post(
-        "http://localhost:8080/meal-booking/booking",
-        data
-      );
-      if (response.status === 201) {
-        toast.success(response.data, SuccessToast);
-        setTimeout(() => closePopUp(), 1800);
-      } else {
-        toast.error("Failed to book meal!", toastStyle);
-      }
-    } catch (error) {
-      if (error.status === 403) {
-        toast.error(
-          "Failed to book meal: " + (error.response?.data || error.message),
-          toastStyle
+  
+    if (isAuthenticate()) {
+      setLoading(true);
+      try {
+        const data = {
+          employeeId: id,
+          mealId: parseInt(mealType === "Lunch" ? 1 : 2),
+          startDate: startDate.format("YYYY-MM-DD"),
+          endDate: endDate.format("YYYY-MM-DD"),
+        };
+        const response = await axios.post(
+          "http://localhost:8080/meal-booking/booking",
+          data
         );
-      } else {
-        toast.error(
-          error.message,
-          toastStyle
-        );
+  
+        if (response.status === 201) {
+          toast.success(response.data, toastStyle);
+          setTimeout(() => closePopUp(), 1800);
+        } else {
+          toast.error("Failed to book meal!", toastStyle);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          toast.error(
+            "Failed to book meal: " + (error.response?.data || error.message),
+            toastStyle
+          );
+        } else {
+          toast.error(error.message, toastStyle);
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
+    } else {
+      setTimeout(()=>{
+        navigate("/login");
+      },1500)
     }
   };
 

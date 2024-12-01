@@ -5,56 +5,61 @@ import InputField from "../Components/InputField";
 import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import dayjs from "dayjs";
 import cookies from "js-cookie";
-import { SuccessToast, toastStyle } from "../Constants/general";
+import {  toastStyle } from "../Constants/general";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import Spinner from "../Components/Spinner";
 
 const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
-  const { isBookingDinner,isWeekend } = useContext(contextProvider);
+  const { isBookingDinner, isWeekend } = useContext(contextProvider);
   const [mealType, setMealType] = useState(null);
-  const {id} = JSON.parse(cookies.get("UserCookie"));
-  const [loading,setLoading] = useState(false);
+  const { id } = JSON.parse(cookies.get("UserCookie"));
+  const [loading, setLoading] = useState(false);
   const todayDateTime = dayjs();
 
   const isBookingLunch = () => {
     const timeOut = todayDateTime.hour(12).minute(0);
     return todayDateTime.isBefore(timeOut);
   };
+
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    try {
+    if (isAuthenticate()) {
       setLoading(true);
-      const data = {
-        employeeId: id,
-        mealId: parseInt(mealType === "Lunch" ? 1 : 2),
-        startDate: todayDateTime.format("YYYY-MM-DD"),
-        endDate: todayDateTime.format("YYYY-MM-DD"),
-      };
-      const response = await axios.post(
-        "http://localhost:8080/meal-booking/booking",
-        data
-      );
-      if (response.status === 201) {
-        toast.success(response.data, SuccessToast);
-        setTimeout(() => closeQuickMeal(), 1800);
-      } else {
-        toast.error("Failed to book meal!", toastStyle);
-      }
-    } catch (error) {
-      if (error.status === 403) {
-        toast.error(
-          "Failed to book meal: " + (error.response?.data || error.message),
-          toastStyle
+      try {
+        const data = {
+          employeeId: id,
+          mealId: parseInt(mealType === "Lunch" ? 1 : 2),
+          startDate: todayDateTime.format("YYYY-MM-DD"),
+          endDate: todayDateTime.format("YYYY-MM-DD"),
+        };
+        const response = await axios.post(
+          "http://localhost:8080/meal-booking/booking",
+          data
         );
-      } else {
-        toast.error(
-          "Something Went Wrong",
-          toastStyle
-        );
+
+        if (response.status === 201) {
+          toast.success(response.data, toastStyle);
+          setTimeout(() => closeQuickMeal(), 1800);
+        } else {
+          toast.error("Failed to book meal!", toastStyle);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          toast.error(
+            "Failed to book meal: " + (error.response?.data || error.message),
+            toastStyle
+          );
+        } else {
+          toast.error(error.message, toastStyle);
+        }
+      } finally {
+        setLoading(false);
       }
-    }finally{
-      setLoading(false);
+    } else {
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
     }
   };
   return (
@@ -87,7 +92,7 @@ const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
                 type="radio"
                 name="mealType"
                 id="lunch"
-                disabled={!isBookingLunch()|| isWeekend(dayjs())}
+                disabled={!isBookingLunch() || isWeekend(dayjs())}
                 onChange={() => setMealType("Lunch")}
               />
               <label className="form-check-label" htmlFor="lunch">
@@ -101,7 +106,7 @@ const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
                 type="radio"
                 name="mealType"
                 id="dinner"
-                disabled={!isBookingDinner()|| isWeekend(dayjs())}
+                disabled={!isBookingDinner() || isWeekend(dayjs())}
                 onChange={() => setMealType("Dinner")}
               />
               <label className="form-check-label" htmlFor="dinner">
@@ -126,7 +131,7 @@ const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
         </form>
       </div>
       <ToastContainer />
-      {loading&& <Spinner />}
+      {loading && <Spinner />}
     </>
   );
 };

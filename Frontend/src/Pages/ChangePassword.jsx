@@ -4,7 +4,7 @@ import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PasswordInput from "../Components/PasswordInput";
 import Button from "../Components/Button";
-import { SuccessToast } from "../Constants/general";
+import { toastStyle } from "../Constants/general";
 import { useContext } from "react";
 import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 
@@ -17,7 +17,7 @@ const ChangePassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateChangePassword(oldPassword, password, confirmPassword)) {
-      toast.success("submitted successful!", SuccessToast);
+      toast.success("submitted successful!", toastStyle);
     }
   };
 

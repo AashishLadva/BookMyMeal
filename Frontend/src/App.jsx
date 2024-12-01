@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 import Login from "./Pages/Login";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -15,12 +16,7 @@ import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import About from "./Pages/About";
 import TermAndCondition from "./Pages/TermAndCondition";
 import ValidationsAndItemsProvider from "./Utils/ValidationsAndItemsProvider";
-import Cookies from "js-cookie";
-
-const ProtectRoute = ({ children }) => {
-  const cookie = Cookies.get("UserCookie");
-  return cookie ? children : <Navigate to="/login" />;
-};
+import ProtectRoutes from "./Components/ProtectRoutes";
 
 const App = () => {
   return (
@@ -31,9 +27,9 @@ const App = () => {
           <Route
             path="/"
             element={
-              <ProtectRoute>
+              <ProtectRoutes>
                 <Layout />
-              </ProtectRoute>
+              </ProtectRoutes>
             }
           >
             <Route path="" element={<Home />} />
