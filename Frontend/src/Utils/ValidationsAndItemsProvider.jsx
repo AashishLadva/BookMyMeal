@@ -16,7 +16,6 @@ export const contextProvider = createContext({
   validateUserEmail: () => {},
   validatePassword: () => {},
   validateChangePassword: () => {},
-  isWeekend: () => {},
   navItems: [],
   isBookingDinner: () => {},
   isBookingLunch: () => {},
@@ -82,27 +81,6 @@ const validateChangePassword = (oldPassword, password, confirmPassword) => {
   return true;
 };
 
-const holidays = [];
-
-const fetchHoliday = async () => {
-  const response = await fetch(
-    "http://localhost:8080/meal-booking/getHolidays"
-  );
-  const result = await response.json();
-  if (response.status === 200) {
-    result.map((item) => holidays.push(dayjs(item)));
-  }
-};
-fetchHoliday();
-
-const isWeekend = (date) => {
-  const day = date.day();
-  return (
-    day === 0 ||
-    day === 6 ||
-    holidays.some((holiday) => holiday.isSame(date, "day"))
-  );
-};
 const navItems = [
   { label: "Home", icon: <FaHome />, route: "" },
   {
@@ -141,6 +119,7 @@ const isAuthenticate = () => {
   try {
     const decodedToken = jwtDecode(token);
     const currentTime = Math.round(Date.now() / 1000);
+    
     if (decodedToken.exp > currentTime) {
       return true;
     } else {
@@ -167,7 +146,7 @@ const ValidationsAndItemsProvider = ({ children }) => {
         validateUserEmail,
         validatePassword,
         validateChangePassword,
-        isWeekend,
+        
         navItems,
         isBookingDinner,
         isBookingLunch,

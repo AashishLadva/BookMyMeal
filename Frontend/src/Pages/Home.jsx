@@ -16,8 +16,9 @@ import axios from "axios";
 import Cookie from "js-cookie";
 import Spinner from "../Components/Spinner";
 import QrCode from "./QrCode";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { toastStyle } from "../Constants/general";
 
 const Home = () => {
   const todayDateTime = dayjs();
@@ -25,21 +26,65 @@ const Home = () => {
   const [openViewBooking, setOpenViewBooking] = useState(false);
   const [selectedDate, setselectedDate] = useState(todayDateTime);
   const [quickMeal, setQuickMeal] = useState(false);
-  const { isWeekend,isAuthenticate } = useContext(contextProvider);
+  const { isAuthenticate } = useContext(contextProvider);
   const [bookedDate, setBookedDate] = useState([]);
-  const { id,userName } = JSON.parse(Cookie.get("UserCookie"));
+  const { id, userName } = JSON.parse(Cookie.get("UserCookie"));
   const [loading, setLoading] = useState(false);
   const [refreshData, setRefreshData] = useState(false);
   const [showQr, setShowQr] = useState(false);
-  const [coupen,setCoupen] = useState(null);
+  const [coupen, setCoupen] = useState(null);
   const navigate = useNavigate();
+  const token = sessionStorage.getItem("authToken");
+  const [holidays, setHolidays] = useState([]);
+
+  useEffect(() => {
+    const fetchHoliday = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          "http://localhost:8080/meal-booking/getHolidays",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const result = await response.json();
+        if (response.status === 200) {
+          const holidayDates = result.map((item) => dayjs(item));
+          setHolidays(holidayDates);
+        }
+      } catch (error) {
+        if (error.response) {
+          toast.error(error.response, toastStyle);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHoliday();
+  }, []);
+
+  const isWeekend = (date) => {
+    const day = date.day();
+    return (
+      day === 0 ||
+      day === 6 ||
+      holidays.some((holiday) => holiday.isSame(date, "day"))
+    );
+  };
 
   useEffect(() => {
     const fetchMealBookings = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8080/meal-booking/display-booking/${id}`
+          `http://localhost:8080/meal-booking/${id}/display-booking`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (response.status === 200) {
           setBookedDate(
@@ -50,7 +95,12 @@ const Home = () => {
           );
         }
       } catch (error) {
-        console.error("Error fetching meal bookings:", error);
+        if (error.response.status === 401) {
+          Cookie.remove("UserCookie");
+          sessionStorage.removeItem("authToken");
+          toast.error("Session Timeout Please Login Again", toastStyle);
+          navigate("/login");
+        }
       } finally {
         setLoading(false);
       }
@@ -86,11 +136,11 @@ const Home = () => {
     if (hasLunch && hasDinner) {
       return (
         (selectedDate.isSame(todayDateTime, "day") &&
-        todayDateTime.isAfter(todayDateTime.hour(12).minute(0)) &&
-        todayDateTime.isBefore(todayDateTime.hour(15).minute(0))) ||
+          todayDateTime.isAfter(todayDateTime.hour(12).minute(0)) &&
+          todayDateTime.isBefore(todayDateTime.hour(15).minute(0))) ||
         (selectedDate.isSame(todayDateTime, "day") &&
-        todayDateTime.isAfter(todayDateTime.hour(20).minute(0)) &&
-        todayDateTime.isBefore(todayDateTime.hour(22).minute(0)))
+          todayDateTime.isAfter(todayDateTime.hour(20).minute(0)) &&
+          todayDateTime.isBefore(todayDateTime.hour(22).minute(0)))
       );
     } else if (hasLunch) {
       return (
@@ -108,35 +158,39 @@ const Home = () => {
     return false;
   };
 
-
-  const fetchQr = async() =>{
-    if(isAuthenticate()){
-      try{
-        setLoading(true);
-        const response  = await axios.get(`http://localhost:8080/coupons/getCouponDetails/${id}/${hasLunch?1:2}/${selectedDate.format("YYYY-MM-DD")}`)
-        if(response.status===200){
-          setShowQr(true);
-          setCoupen(response.data);
+  const fetchQr = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:8080/coupons/${id}/${
+          hasLunch ? 1 : 2
+        }/${selectedDate.format("YYYY-MM-DD")}/getCouponDetails`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      }catch(error){
-        if (error.response) {
-          toast.error(
-            (error.response?.data || error.message),
-            toastStyle
-          );
-        } else {
-          toast.error(error.message, toastStyle);
-        }
-      }finally{
-        setLoading(false);
+      );
+      if (response.status === 200) {
+        setShowQr(true);
+        setCoupen(response.data);
       }
+    } catch (error) {
+      if (error.response.status === 401) {
+        Cookie.remove("UserCookie");
+        sessionStorage.removeItem("authToken");
+        toast.error("Session Timeout Please Login Again", toastStyle);
+        navigate("/login");
+      } else if (error.response) {
+        toast.error(error.response?.data || error.message, toastStyle);
+      } else {
+        toast.error(error.message, toastStyle);
+      }
+    } finally {
+      setLoading(false);
     }
-    else{9
-      setTimeout(()=>{
-        navigate('/login')
-      },1500)
-    }
-  }
+  };
+
   return (
     <>
       {openViewBooking && (
@@ -161,6 +215,7 @@ const Home = () => {
         <div className="row">
           <div className="col-md-6">
             <Calender
+              isWeekend={isWeekend}
               handleOnChange1={(date) => setselectedDate(date)}
               bookedDate={bookedDate}
             />
@@ -198,7 +253,16 @@ const Home = () => {
                 onClick={fetchQr}
               />
             ) : null}
-            {showQr && <QrCode id={id} hasLunch={hasLunch} coupen={coupen} selectedDate={selectedDate} userName={userName} stopQr={() => setShowQr(false)} />}
+            {showQr && (
+              <QrCode
+                id={id}
+                hasLunch={hasLunch}
+                coupen={coupen}
+                selectedDate={selectedDate}
+                userName={userName}
+                stopQr={() => setShowQr(false)}
+              />
+            )}
             <MealOfTheDay selectedDate={selectedDate} />
           </div>
         </div>
@@ -214,15 +278,22 @@ const Home = () => {
           buttonName="Book a meal"
           onClick={() => setOpenPopUp(true)}
         ></Button>
-        {openPopUp && <BookMeal closePopUp={() => setOpenPopUp(false)} />}
+        {openPopUp && (
+          <BookMeal
+            isWeekend={isWeekend}
+            closePopUp={() => setOpenPopUp(false)}
+          />
+        )}
         {quickMeal && (
           <QuickMeal
             closeQuickMeal={() => setQuickMeal(false)}
             selectedDate={selectedDate}
+            isWeekend={isWeekend}
           />
         )}
       </div>
       {loading && <Spinner />}
+      <ToastContainer />
     </>
   );
 };

@@ -19,8 +19,8 @@ import axios from "axios";
 import Spinner from "../Components/Spinner";
 import { useNavigate } from "react-router-dom";
 
-const BookMeal = ({ closePopUp }) => {
-  const { isWeekend, isBookingDinner, isBookingLunch, isAuthenticate } =
+const BookMeal = ({ closePopUp,isWeekend }) => {
+  const {  isBookingDinner, isBookingLunch } =
     useContext(contextProvider);
   const [startDate, setStartDate] = useState(null);
   const [mealType, setMealType] = useState("Lunch");
@@ -30,7 +30,7 @@ const BookMeal = ({ closePopUp }) => {
   const maxDate = dayjs().add(3, "month");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  const token = sessionStorage.getItem("authToken");
   const handleChange = (date) => {
     const [start, end] = date;
     setStartDate(dayjs(start));
@@ -69,48 +69,49 @@ const BookMeal = ({ closePopUp }) => {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-
     if (!startDate || !endDate) {
       toast.error("Please fill all fields", toastStyle);
       return;
     }
 
-    if (isAuthenticate()) {
-      setLoading(true);
-      try {
-        const data = {
-          employeeId: id,
-          mealId: parseInt(mealType === "Lunch" ? 1 : 2),
-          startDate: startDate.format("YYYY-MM-DD"),
-          endDate: endDate.format("YYYY-MM-DD"),
-        };
-        const response = await axios.post(
-          "http://localhost:8080/meal-booking/booking",
-          data
-        );
+    setLoading(true);
+    try {
+      const data = {
+        employeeId: id,
+        mealId: parseInt(mealType === "Lunch" ? 1 : 2),
+        startDate: startDate.format("YYYY-MM-DD"),
+        endDate: endDate.format("YYYY-MM-DD"),
+      };
+      const response = await axios.post(
+        "http://localhost:8080/meal-booking/booking",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-        if (response.status === 201) {
-          toast.success(response.data, toastStyle);
-          setTimeout(() => closePopUp(), 1800);
-        } else {
-          toast.error("Failed to book meal!", toastStyle);
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 403) {
-          toast.error(
-            "Failed to book meal: " + (error.response?.data || error.message),
-            toastStyle
-          );
-        } else {
-          toast.error(error.message, toastStyle);
-        }
-      } finally {
-        setLoading(false);
+      if (response.status === 201) {
+        toast.success(response.data, toastStyle);
+        setTimeout(() => closePopUp(), 1800);
+      } else {
+        toast.error("Failed to book meal!", toastStyle);
       }
-    } else {
-      setTimeout(() => {
+    } catch (error) {
+      if (error.response.status === 401) {
+        cookies.remove("UserCookie");
+        sessionStorage.removeItem("authToken");
+        toast.error("Session Timeout Please Login Again", toastStyle);
         navigate("/login");
-      }, 1500);
+      } else if (error.response && error.response.status === 403) {
+        toast.error(
+          "Failed to book meal: " + (error.response?.data || error.message),
+          toastStyle
+        );
+      }
+    } finally {
+      setLoading(false);
     }
   };
 

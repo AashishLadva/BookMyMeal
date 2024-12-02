@@ -4,16 +4,25 @@ import { note, toastStyle } from "../Constants/general";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Spinner from "../Components/Spinner";
+import cookies from 'js-cookie';
+import { useNavigate } from "react-router-dom";
 
 const MealOfTheDay = ({ selectedDate }) => {
   const [menu, setMenu] = useState([]);
   const [loading,setLoading] = useState(false);
+  const token  = sessionStorage.getItem("authToken");
+  const navigate = useNavigate();
+  
   useEffect(() => {
     const fetchMealData = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8080/menu/${selectedDate.format("dddd")}`
+          `http://localhost:8080/menu/${selectedDate.format("dddd")}/getMenu`,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (response.status === 200) {
           setMenu(
@@ -24,7 +33,14 @@ const MealOfTheDay = ({ selectedDate }) => {
           );
         }
       } catch (error) {
-        toast.error(error.response?.data || error.message, toastStyle);
+        if(error.response.status===401){
+          cookies.remove("UserCookie");
+          sessionStorage.removeItem("authToken");
+          toast.error("Session Timeout Please Login Again", toastStyle);
+          navigate("/login");
+        }else{
+          toast.error(error.response?.data || error.message, toastStyle);
+        }
       }
       finally{
         setLoading(false);

@@ -2,7 +2,6 @@ import React from "react";
 import Styles from "../Css/QrCode.module.css";
 import QRCode from "react-qr-code";
 import Button from "../Components/Button";
-import axios from "axios";
 
 function QrCode({ id, coupen, userName, hasLunch, stopQr, selectedDate }) {
   return (

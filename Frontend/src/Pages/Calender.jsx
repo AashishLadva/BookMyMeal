@@ -4,12 +4,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import "../Css/Calender.css";
-import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import { Badge } from "@mui/material";
 import { PickersDay } from "@mui/x-date-pickers";
 
-const Calender = ({ handleOnChange1,bookedDate }) => {
-  const { isWeekend } = useContext(contextProvider);
+const Calender = ({ handleOnChange1,bookedDate,isWeekend }) => {
+ 
   const today = dayjs();
   const maxDate = today.add(3, "month");
 

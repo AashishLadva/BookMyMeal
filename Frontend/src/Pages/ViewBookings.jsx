@@ -20,6 +20,10 @@ import { Badge } from "@mui/material";
 import { PickersDay } from "@mui/x-date-pickers";
 import Spinner from "../Components/Spinner";
 import "../Css/ViewBookingForCalender.css";
+import cookies from 'js-cookie';
+import { toast } from "react-toastify";
+import { toastStyle } from "../Constants/general";
+import { useNavigate } from "react-router-dom";
 
 const ViewBookings = ({ closeViewBooking }) => {
   const todayDateTime = dayjs();
@@ -35,28 +39,40 @@ const ViewBookings = ({ closeViewBooking }) => {
   const [loading, setLoading] = useState(false);
   const [showYear, setShowYear] = useState(dayjs().year());
   const [showMonth, setShowMonth] = useState(dayjs().month());
+  const token = sessionStorage.getItem("authToken");
+  const navigate =useNavigate();
 
-  useEffect(() => {
+  
     const fetchMealBookings = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8080/meal-booking/view-booking/${id}/${
+          `http://localhost:8080/meal-booking/${id}/${
             mealType === "Lunch" ? 1 : 2
-          }`
+          }/view-booking`,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         if (response.status === 200) {
           setBookedDate(response.data.map((date) => dayjs(date)));
+          setViewCal(true);
         }
       } catch (error) {
-        console.error("Error fetching meal bookings:", error);
+        if (error.response.status === 401) {
+          cookies.remove("UserCookie");
+          sessionStorage.removeItem("authToken");
+          toast.error("Session Timeout Please Login Again", toastStyle);
+          navigate("/login");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMealBookings();
-  }, [mealType, showMonth, showYear]);
+    
+ 
 
   const CustomDay = (props) => {
     const { day, outsideCurrentMonth, ...other } = props;
@@ -140,7 +156,7 @@ const ViewBookings = ({ closeViewBooking }) => {
         <div className="my-3 text-center">
           <Button
             buttonName="view"
-            onClick={() => setViewCal(true)}
+            onClick={fetchMealBookings}
             className="btn btn-danger w-25"
           />
         </div>

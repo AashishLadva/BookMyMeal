@@ -1,13 +1,13 @@
 import Button from "../Components/Button";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Styles from "../Css/CancelPopup.module.css";
 import axios from "axios";
 import cookie from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import { toastStyle } from "../Constants/general";
 import Spinner from "../Components/Spinner";
-import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import { useNavigate } from "react-router-dom";
+import cookies from "js-cookie";
 
 const CancelPopup = ({
   handleCloseCancel,
@@ -15,41 +15,46 @@ const CancelPopup = ({
   onCancel,
   mealType,
 }) => {
-  const { isAuthenticate } = useContext(contextProvider);
   const { id } = JSON.parse(cookie.get("UserCookie"));
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const token = sessionStorage.getItem("authToken");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isAuthenticate()) {
-      try {
-        setLoading(true);
-        const response = await axios.post(
-          `http://localhost:8080/meal-booking/cancel/${id}/${
-            mealType === "LUNCH" ? 1 : 2
-          }/${selectedDate.format("YYYY-MM-DD")}`
-        );
-        if (response.status === 200) {
-          toast.success(response.data, toastStyle);
-          setTimeout(() => {
-            handleCloseCancel();
-            onCancel();
-          }, 1800);
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `http://localhost:8080/meal-booking/${id}/${
+          mealType === "LUNCH" ? 1 : 2
+        }/${selectedDate.format("YYYY-MM-DD")}/cancel-booking`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } catch (error) {
-        if (error.status === 400) {
-          const errorMessage =
-            error.response?.data || "Something went wrong! Please try again.";
-          toast.error(errorMessage, toastStyle);
-        }
-      } finally {
-        setLoading(false);
+      );
+      if (response.status === 200) {
+        toast.success(response.data, toastStyle);
+        setTimeout(() => {
+          handleCloseCancel();
+          onCancel();
+        }, 1800);
       }
-    } else {
-      setTimeout(() => {
+    } catch (error) {
+      if (error.status === 400) {
+        const errorMessage =
+          error.response?.data || "Something went wrong! Please try again.";
+        toast.error(errorMessage, toastStyle);
+      } else if (error.response.status === 401) {
+        cookies.remove("UserCookie");
+        sessionStorage.removeItem("authToken");
+        toast.error("Session Timeout Please Login Again", toastStyle);
         navigate("/login");
-      }, 1500);
+      }
+    } finally {
+      setLoading(false);
     }
   };
   return (

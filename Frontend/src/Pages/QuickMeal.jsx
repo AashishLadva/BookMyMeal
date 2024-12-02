@@ -5,17 +5,21 @@ import InputField from "../Components/InputField";
 import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import dayjs from "dayjs";
 import cookies from "js-cookie";
-import {  toastStyle } from "../Constants/general";
+import { toastStyle } from "../Constants/general";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import Spinner from "../Components/Spinner";
+import { useNavigate } from "react-router-dom";
 
-const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
-  const { isBookingDinner, isWeekend,isAuthenticate } = useContext(contextProvider);
+const QuickMeal = ({ closeQuickMeal, selectedDate,isWeekend }) => {
+  const { isBookingDinner, isAuthenticate } =
+    useContext(contextProvider);
   const [mealType, setMealType] = useState(null);
   const { id } = JSON.parse(cookies.get("UserCookie"));
   const [loading, setLoading] = useState(false);
   const todayDateTime = dayjs();
+  const token = sessionStorage.getItem("authToken");
+  const navigate = useNavigate();
 
   const isBookingLunch = () => {
     const timeOut = todayDateTime.hour(12).minute(0);
@@ -24,7 +28,6 @@ const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    if (isAuthenticate()) {
       setLoading(true);
       try {
         const data = {
@@ -35,7 +38,12 @@ const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
         };
         const response = await axios.post(
           "http://localhost:8080/meal-booking/booking",
-          data
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
         if (response.status === 201) {
@@ -45,7 +53,12 @@ const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
           toast.error("Failed to book meal!", toastStyle);
         }
       } catch (error) {
-        if (error.response && error.response.status === 403) {
+        if (error.response.status === 401) {
+          cookies.remove("UserCookie");
+          sessionStorage.removeItem("authToken");
+          toast.error("Session Timeout Please Login Again", toastStyle);
+          navigate("/login");
+        } else if (error.response && error.response.status === 403) {
           toast.error(
             "Failed to book meal: " + (error.response?.data || error.message),
             toastStyle
@@ -56,11 +69,6 @@ const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
       } finally {
         setLoading(false);
       }
-    } else {
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    }
   };
   return (
     <>

@@ -1,10 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 import { useContext, useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import cookies from 'js-cookie'
 import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
-import { toastStyle } from "../Constants/general";
 
 const ProtectRoutes = ({ children }) => {
   const navigate = useNavigate();
@@ -22,7 +18,6 @@ const ProtectRoutes = ({ children }) => {
           navigate("/login");
         }
       } catch (error) {
-        console.error("Invalid token or cookie format", error);
         setIsTokenValid(false);
         navigate("/login");
       }
@@ -32,14 +27,9 @@ const ProtectRoutes = ({ children }) => {
     }
   }, [navigate]);
 
-  if (isTokenValid === null) {
-    return null;
-  }
-
   if (isTokenValid) {
     return children;
   }
-
   return null;
 };
 
