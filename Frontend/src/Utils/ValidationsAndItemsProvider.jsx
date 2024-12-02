@@ -10,6 +10,7 @@ import { PiWarningCircleFill } from "react-icons/pi";
 import { MdPrivacyTip } from "react-icons/md";
 import { jwtDecode } from "jwt-decode";
 import cookies from "js-cookie";
+import { LicenseInfo } from "@mui/x-license-pro";
 
 export const contextProvider = createContext({
   validateUserEmail: () => {},
@@ -157,6 +158,9 @@ const isAuthenticate = () => {
   }
 };
 const ValidationsAndItemsProvider = ({ children }) => {
+  LicenseInfo.setLicenseKey(
+    "e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y"
+  );
   return (
     <contextProvider.Provider
       value={{

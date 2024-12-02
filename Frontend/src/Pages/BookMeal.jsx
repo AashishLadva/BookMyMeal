@@ -10,7 +10,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import { SingleInputDateRangeField } from "@mui/x-date-pickers-pro/SingleInputDateRangeField";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { LicenseInfo } from "@mui/x-license-pro";
 import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import InputField from "../Components/InputField";
 import cookies from "js-cookie";
@@ -21,9 +20,6 @@ import Spinner from "../Components/Spinner";
 import { useNavigate } from "react-router-dom";
 
 const BookMeal = ({ closePopUp }) => {
-  LicenseInfo.setLicenseKey(
-    "e0d9bb8070ce0054c9d9ecb6e82cb58fTz0wLEU9MzI0NzIxNDQwMDAwMDAsUz1wcmVtaXVtLExNPXBlcnBldHVhbCxLVj0y"
-  );
   const { isWeekend, isBookingDinner, isBookingLunch, isAuthenticate } =
     useContext(contextProvider);
   const [startDate, setStartDate] = useState(null);
@@ -73,12 +69,12 @@ const BookMeal = ({ closePopUp }) => {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!startDate || !endDate) {
       toast.error("Please fill all fields", toastStyle);
       return;
     }
-  
+
     if (isAuthenticate()) {
       setLoading(true);
       try {
@@ -92,7 +88,7 @@ const BookMeal = ({ closePopUp }) => {
           "http://localhost:8080/meal-booking/booking",
           data
         );
-  
+
         if (response.status === 201) {
           toast.success(response.data, toastStyle);
           setTimeout(() => closePopUp(), 1800);
@@ -112,9 +108,9 @@ const BookMeal = ({ closePopUp }) => {
         setLoading(false);
       }
     } else {
-      setTimeout(()=>{
+      setTimeout(() => {
         navigate("/login");
-      },1500)
+      }, 1500);
     }
   };
 

@@ -9,6 +9,7 @@ import { useContext } from "react";
 import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import axios from "axios";
 import cookies from 'js-cookie';
+import Spinner from "../Components/Spinner";
 
 const ChangePassword = () => {
   const { validateChangePassword, isAuthenticate } =
@@ -103,6 +104,7 @@ const ChangePassword = () => {
         </form>
       </div>
       <ToastContainer />
+      {loading && <Spinner />}
     </>
   );
 };

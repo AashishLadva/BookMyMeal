@@ -1,6 +1,4 @@
 import { Bounce } from "react-toastify";
-import dayjs from "dayjs";
-
 
 export const toastStyle = {
   position: "top-right",

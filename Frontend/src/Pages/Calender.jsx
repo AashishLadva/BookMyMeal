@@ -16,13 +16,13 @@ const Calender = ({ handleOnChange1,bookedDate }) => {
   const CustomDay = (props) => {
     const { day, outsideCurrentMonth, ...other } = props;
 
-    const isEmojiDay = bookedDate.some((emojiDay) => emojiDay.date.isSame(day, "day"));
+    const greenDot = bookedDate.some((dot) => dot.date.isSame(day, "day"));
 
     return (
       <Badge
         key={day.toString()}
         overlap="circular"
-        badgeContent={isEmojiDay && !outsideCurrentMonth ? "🟢" : undefined}
+        badgeContent={greenDot && !outsideCurrentMonth ? "🟢" : undefined}
       >
         <PickersDay
           {...other}

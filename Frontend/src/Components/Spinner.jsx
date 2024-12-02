@@ -6,7 +6,7 @@ const Spinner = () => {
     <div
       className={`${Styles["spinner-main"]} animate__animated animate__fadeIn animate__fast text-center`}
     >
-      <div className="spinner-grow text-success " role="status">
+      <div className="spinner-grow text-success" role="status">
         <span className="visually-hidden">Loading...</span>
       </div>
       <div className="spinner-grow text-danger" role="status">

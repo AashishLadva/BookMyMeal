@@ -198,7 +198,7 @@ const Home = () => {
                 onClick={fetchQr}
               />
             ) : null}
-            {showQr && <QrCode id={id} hasLunch={hasLunch} coupen={coupen} userName={userName} stopQr={() => setShowQr(false)} />}
+            {showQr && <QrCode id={id} hasLunch={hasLunch} coupen={coupen} selectedDate={selectedDate} userName={userName} stopQr={() => setShowQr(false)} />}
             <MealOfTheDay selectedDate={selectedDate} />
           </div>
         </div>

@@ -60,15 +60,15 @@ const ViewBookings = ({ closeViewBooking }) => {
 
   const CustomDay = (props) => {
     const { day, outsideCurrentMonth, ...other } = props;
-    const isEmojiDay = bookedDate.some((emojiDay) =>
-      emojiDay.isSame(day, "day")
+    const greenDot = bookedDate.some((dot) =>
+      dot.isSame(day, "day")
     );
 
     return (
       <Badge
         key={day.toString()}
         overlap="circular"
-        badgeContent={isEmojiDay && !outsideCurrentMonth ? "🟢" : undefined}
+        badgeContent={greenDot && !outsideCurrentMonth ? "🟢" : undefined}
       >
         <PickersDay
           {...other}
