@@ -11,7 +11,7 @@ import axios from "axios";
 import Spinner from "../Components/Spinner";
 
 const QuickMeal = ({ closeQuickMeal, selectedDate }) => {
-  const { isBookingDinner, isWeekend } = useContext(contextProvider);
+  const { isBookingDinner, isWeekend,isAuthenticate } = useContext(contextProvider);
   const [mealType, setMealType] = useState(null);
   const { id } = JSON.parse(cookies.get("UserCookie"));
   const [loading, setLoading] = useState(false);
