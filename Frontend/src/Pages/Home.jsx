@@ -125,7 +125,8 @@ const Home = () => {
   const quickAddMeal = () => {
     return (
       selectedDate.isSame(todayDateTime, "day") &&
-      todayDateTime.hour() < 15 &&
+      todayDateTime.isAfter(todayDateTime.hour(10).minute(0))&&
+      todayDateTime.isBefore(todayDateTime.hour(15).minute(0)) &&
       !isWeekend(selectedDate)
     );
   };

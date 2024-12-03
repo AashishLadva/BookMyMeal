@@ -12,7 +12,7 @@ import Spinner from "../Components/Spinner";
 import { useNavigate } from "react-router-dom";
 
 const QuickMeal = ({ closeQuickMeal, selectedDate,isWeekend }) => {
-  const { isBookingDinner, isAuthenticate } =
+  const { isBookingDinner } =
     useContext(contextProvider);
   const [mealType, setMealType] = useState(null);
   const { id } = JSON.parse(cookies.get("UserCookie"));
