@@ -255,7 +255,6 @@ const Home = () => {
             {showQr && (
               <QrCode
                 id={id}
-                hasLunch={hasLunch}
                 coupen={coupen}
                 selectedDate={selectedDate}
                 userName={userName}
