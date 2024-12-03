@@ -68,12 +68,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Store username and employeeId as part of the authentication details
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 //                response.setHeader("Access-Control-Allow-Origin", "*");
 //                response.setHeader("Access-Control-Allow-Methods", "*");
-//                response.setHeader("Access-Control-Max-Age", "5174");
-//                response.setHeader("Access-Control-Allow-Headers", "*")
+//                response.setHeader("Access-Control-Max-Age", "5173");
+//                response.setHeader("Access-Control-Allow-Headers", "*");
             }
         }
 
