@@ -21,8 +21,6 @@ const Navbar = () => {
     closeBtn.current.click();
   };
   const handleLogoutBtn = () => {
-    cookies.remove("UserCookie");
-    sessionStorage.removeItem("authToken");
     navigate("/login");
   };
 

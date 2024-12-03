@@ -4,7 +4,6 @@ import { note, toastStyle } from "../Constants/general";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Spinner from "../Components/Spinner";
-import cookies from 'js-cookie';
 import { useNavigate } from "react-router-dom";
 
 const MealOfTheDay = ({ selectedDate }) => {
@@ -34,10 +33,10 @@ const MealOfTheDay = ({ selectedDate }) => {
         }
       } catch (error) {
         if(error.response.status===401){
-          cookies.remove("UserCookie");
-          sessionStorage.removeItem("authToken");
           toast.error("Session Timeout Please Login Again", toastStyle);
-          navigate("/login");
+          setTimeout(()=>{
+            navigate("/login");
+          },1500);
         }else{
           toast.error(error.response?.data || error.message, toastStyle);
         }

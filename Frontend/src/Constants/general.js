@@ -2,7 +2,7 @@ import { Bounce } from "react-toastify";
 
 export const toastStyle = {
   position: "top-right",
-  autoClose: 1500,
+  autoClose: 1400,
   hideProgressBar: false,
   closeOnClick: true,
   pauseOnHover: true,

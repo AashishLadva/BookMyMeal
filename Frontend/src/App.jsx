@@ -3,8 +3,6 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  Navigate,
-  useNavigate,
 } from "react-router-dom";
 import Login from "./Pages/Login";
 import "bootstrap/dist/css/bootstrap.min.css";

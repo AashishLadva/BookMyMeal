@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Styles from "../Css/Home.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BookMeal from "./BookMeal";
@@ -11,7 +11,6 @@ import ViewBookings from "./ViewBookings";
 import CancelMeal from "./CancelMeal";
 import MealOfTheDay from "./MealOfTheDay";
 import QuickMeal from "./QuickMeal";
-import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import axios from "axios";
 import Cookie from "js-cookie";
 import Spinner from "../Components/Spinner";
@@ -26,7 +25,6 @@ const Home = () => {
   const [openViewBooking, setOpenViewBooking] = useState(false);
   const [selectedDate, setselectedDate] = useState(todayDateTime);
   const [quickMeal, setQuickMeal] = useState(false);
-  const { isAuthenticate } = useContext(contextProvider);
   const [bookedDate, setBookedDate] = useState([]);
   const { id, userName } = JSON.parse(Cookie.get("UserCookie"));
   const [loading, setLoading] = useState(false);
@@ -96,10 +94,10 @@ const Home = () => {
         }
       } catch (error) {
         if (error.response.status === 401) {
-          Cookie.remove("UserCookie");
-          sessionStorage.removeItem("authToken");
           toast.error("Session Timeout Please Login Again", toastStyle);
-          navigate("/login");
+          setTimeout(()=>{
+            navigate("/login");
+          },1500);
         }
       } finally {
         setLoading(false);
@@ -177,10 +175,10 @@ const Home = () => {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        Cookie.remove("UserCookie");
-        sessionStorage.removeItem("authToken");
         toast.error("Session Timeout Please Login Again", toastStyle);
-        navigate("/login");
+        setTimeout(()=>{
+          navigate("/login");
+        },1500);
       } else if (error.response) {
         toast.error(error.response?.data || error.message, toastStyle);
       } else {

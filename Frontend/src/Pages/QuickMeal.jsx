@@ -54,10 +54,10 @@ const QuickMeal = ({ closeQuickMeal, selectedDate,isWeekend }) => {
         }
       } catch (error) {
         if (error.response.status === 401) {
-          cookies.remove("UserCookie");
-          sessionStorage.removeItem("authToken");
           toast.error("Session Timeout Please Login Again", toastStyle);
-          navigate("/login");
+          setTimeout(()=>{
+            navigate("/login");
+          },1500);
         } else if (error.response && error.response.status === 403) {
           toast.error(
             "Failed to book meal: " + (error.response?.data || error.message),

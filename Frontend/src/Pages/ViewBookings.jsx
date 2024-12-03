@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -13,14 +13,12 @@ import FormControl from "@mui/material/FormControl";
 import Button from "../Components/Button";
 import dayjs from "dayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
-import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import Cookie from "js-cookie";
 import axios from "axios";
 import { Badge } from "@mui/material";
 import { PickersDay } from "@mui/x-date-pickers";
 import Spinner from "../Components/Spinner";
 import "../Css/ViewBookingForCalender.css";
-import cookies from 'js-cookie';
 import { toast } from "react-toastify";
 import { toastStyle } from "../Constants/general";
 import { useNavigate } from "react-router-dom";
@@ -29,7 +27,6 @@ const ViewBookings = ({ closeViewBooking }) => {
   const todayDateTime = dayjs();
   const [value, setValue] = useState(todayDateTime);
   const [viewCal, setViewCal] = useState(false);
-  const { isWeekend } = useContext(contextProvider);
   const [mealType, setmealType] = useState("Lunch");
   const minDate = todayDateTime.subtract(1, "year");
   const maxDate = todayDateTime;
@@ -61,10 +58,10 @@ const ViewBookings = ({ closeViewBooking }) => {
         }
       } catch (error) {
         if (error.response.status === 401) {
-          cookies.remove("UserCookie");
-          sessionStorage.removeItem("authToken");
           toast.error("Session Timeout Please Login Again", toastStyle);
-          navigate("/login");
+          setTimeout(()=>{
+            navigate("/login");
+          },1500);
         }
       } finally {
         setLoading(false);
@@ -176,7 +173,6 @@ const ViewBookings = ({ closeViewBooking }) => {
                     .month(showMonth)
                     .add(2, "month")}
                   onChange={(newValue) => setValue(newValue)}
-                  shouldDisableDate={isWeekend}
                   slots={{
                     day: CustomDay,
                   }}

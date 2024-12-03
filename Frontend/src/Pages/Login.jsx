@@ -18,8 +18,7 @@ import axios from "axios";
 import Spinner from "../Components/Spinner";
 
 const Login = () => {
-  const { validateUserEmail, validatePassword } =
-    useContext(contextProvider);
+  const { validateUserEmail, validatePassword } = useContext(contextProvider);
   const [showPassword, setShawPassword] = useState(false);
   const navigate = useNavigate("");
   const [userEmail, setUserEmail] = useState("");
@@ -50,11 +49,10 @@ const Login = () => {
             { secure: true, sameSite: "Strict" }
           );
           sessionStorage.setItem("authToken", response.data.token);
-         toast.success("Login Successful!", toastStyle)
-          setTimeout(()=>{
+          toast.success("Login Successful!", toastStyle);
+          setTimeout(() => {
             navigate("/");
-          },1500)
-          
+          }, 1500);
         } else {
           toast.error(response.message, toastStyle);
         }
@@ -78,6 +76,12 @@ const Login = () => {
   const location = useLocation();
   useEffect(() => {
     document.body.style.overflow = "auto";
+  }, [location]);
+  useEffect(() => {
+    if (location.pathname === "/login") {
+      cookies.remove("UserCookie");
+      sessionStorage.removeItem("authToken");
+    }
   }, [location]);
 
   return (

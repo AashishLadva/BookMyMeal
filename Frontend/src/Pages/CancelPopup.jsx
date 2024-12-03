@@ -7,7 +7,6 @@ import { toast, ToastContainer } from "react-toastify";
 import { toastStyle } from "../Constants/general";
 import Spinner from "../Components/Spinner";
 import { useNavigate } from "react-router-dom";
-import cookies from "js-cookie";
 
 const CancelPopup = ({
   handleCloseCancel,
@@ -48,10 +47,10 @@ const CancelPopup = ({
           error.response?.data || "Something went wrong! Please try again.";
         toast.error(errorMessage, toastStyle);
       } else if (error.response.status === 401) {
-        cookies.remove("UserCookie");
-        sessionStorage.removeItem("authToken");
         toast.error("Session Timeout Please Login Again", toastStyle);
-        navigate("/login");
+        setTimeout(()=>{
+          navigate("/login");
+        },1500);
       }
     } finally {
       setLoading(false);

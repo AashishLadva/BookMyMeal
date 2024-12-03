@@ -131,8 +131,6 @@ const isAuthenticate = () => {
   } catch (error) {
     console.error("Error decoding token:", error);
     toast.error("Invalid token. Please log in again.", toastStyle);
-    cookies.remove("UserCookie");
-    sessionStorage.removeItem("authToken");
     return false;
   }
 };
