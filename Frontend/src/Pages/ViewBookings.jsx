@@ -67,10 +67,6 @@ const ViewBookings = ({ closeViewBooking }) => {
         setLoading(false);
       }
     };
-
-    
- 
-
   const CustomDay = (props) => {
     const { day, outsideCurrentMonth, ...other } = props;
     const greenDot = bookedDate.some((dot) =>
