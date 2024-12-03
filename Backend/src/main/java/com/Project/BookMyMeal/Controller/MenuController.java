@@ -1,7 +1,6 @@
 package com.Project.BookMyMeal.Controller;
 
 import com.Project.BookMyMeal.DTO.MenuDTO;
-import com.Project.BookMyMeal.Entity.Menu;
 import com.Project.BookMyMeal.Service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ public class MenuController {
     @Autowired
     private MenuService menuService;
 
-    @GetMapping("/{day}")
+    @GetMapping("/{day}/getMenu")
     public ResponseEntity<?> getMenu(@PathVariable String day) {
         List<MenuDTO> menu = menuService.getMenuByDay(day);
         if (menu == null) {

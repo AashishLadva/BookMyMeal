@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -61,23 +60,6 @@ public class EmployeeService {
         employeeRepository.save(employee);
 
         return "Password changed successfully";
-    }
-
-
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
-    }
-
-    public Optional<Employee> getEmployeeById(Long id) {
-        return employeeRepository.findById(id);
-    }
-
-    public Optional<Employee> getEmployeeByUserName(String userName) {
-        return employeeRepository.findByName(userName);
-    }
-
-    public Optional<Employee> getEmployeeByUserEmail(String Email) {
-        return employeeRepository.findByEmail(Email);
     }
 
     public Employee findByEmail(String email) {

@@ -11,9 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/employees")
@@ -29,16 +28,15 @@ public class EmployeeController {
     @PostMapping("/add")
     public ResponseEntity<?> addEmployee(@RequestBody Employee employee) {
         try {
+            // Save employee if authentication succeeds
             Employee savedEmployee = employeeService.saveEmployee(employee);
-            return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED); // Respond with the saved entity and status 201 (Created)
+            return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
+
         } catch (Exception e) {
-            // Log the exception for debugging purposes
             log.error("Error adding employee", e);
-            return new ResponseEntity<>("Error occurred while adding employee", HttpStatus.INTERNAL_SERVER_ERROR); // Respond with a generic error message and status 500
+            return new ResponseEntity<>("Error occurred while adding employee", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
@@ -53,7 +51,7 @@ public class EmployeeController {
                 Employee employee = employeeService.findByEmail(email);
 
                 if (employee != null) {
-                    String token = jwtUtil.generateToken(email);
+                    String token = jwtUtil.generateToken(employee.getName());
 
                     // Prepare the response with token, userId, and userName
                     Map<String, Object> response = new HashMap<>();
@@ -77,36 +75,14 @@ public class EmployeeController {
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
         try {
-            String responseMessage = employeeService.changePassword(
+            employeeService.changePassword(
                     changePasswordDTO.getEmployeeId(),
                     changePasswordDTO.getCurrentPassword(),
                     changePasswordDTO.getNewPassword()
             );
-            return ResponseEntity.ok(responseMessage);
+            return ResponseEntity.ok("Password changed successfully: ");
         } catch (RuntimeException ex) {
             return ResponseEntity.status(400).body(ex.getMessage());
-        }
-    }
-
-
-    @GetMapping()
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        try {
-            List<Employee> employees = employeeService.getAllEmployees();
-            return new ResponseEntity<>(employees, HttpStatus.OK);
-        } catch (Exception e) {
-            log.error("Error fetching employees", e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getEmployeeById(@PathVariable Long id) {
-        Employee employee = employeeService.getEmployeeById(id).orElse(null);
-        if (employee != null) {
-            return new ResponseEntity<>(employee, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("UserNotFoundException", HttpStatus.NOT_FOUND);
         }
     }
 }

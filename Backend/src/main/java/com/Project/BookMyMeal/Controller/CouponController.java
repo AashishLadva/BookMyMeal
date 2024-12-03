@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/coupons")
@@ -16,7 +15,7 @@ public class CouponController {
     @Autowired
     private CouponService couponService;
 
-    @GetMapping("/getCouponDetails/{employeeId}/{mealId}/{date}")
+    @GetMapping("/{employeeId}/{mealId}/{date}/getCouponDetails")
     public ResponseEntity<String> getCoupons(@PathVariable("employeeId") Long employeeId,
                                              @PathVariable("mealId") Integer mealId,
                                              @PathVariable("date") LocalDate date) {
