@@ -56,8 +56,8 @@ public class EmployeeController {
                     // Prepare the response with token, userId, and userName
                     Map<String, Object> response = new HashMap<>();
                     response.put("token", token);
-                    response.put("userId", employee.getId()); // Assuming getId() returns the employee ID
-                    response.put("userName", employee.getName()); // Assuming getName() returns the employee name
+                    response.put("userId", employee.getId()); // getId() returns the employee ID
+                    response.put("userName", employee.getName()); // getName() returns the employee name
 
                     return ResponseEntity.ok(response);
                 } else {

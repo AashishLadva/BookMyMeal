@@ -50,7 +50,7 @@ public class EmployeeService {
 
         // Check if the current password matches the stored password
         if (!passwordEncoder.matches(currentPassword, employee.getPassword())) {
-            throw new RuntimeException("Current password is incorrect");
+            throw new RuntimeException("Old password is incorrect");
         }
 
         // Encode and set the new password

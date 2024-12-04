@@ -38,18 +38,13 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
-        Long employeeId = null; // Variable to store employeeId
 
         // Check if the header starts with "Bearer "
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7); // Extract token
             try {
                 username = jwtUtil.extractUsername(token); // Extract username from token
-                Optional<Employee> employee = employeeRepository.findByName(username);
 
-                if (employee.isPresent()) {
-                    employeeId = employee.get().getId(); // Extract employeeId from token
-                }
             } catch (Exception e) {
                 logger.error("Error extracting username or employeeId from JWT token", e);
             }
@@ -69,10 +64,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-//                response.setHeader("Access-Control-Allow-Origin", "*");
-//                response.setHeader("Access-Control-Allow-Methods", "*");
-//                response.setHeader("Access-Control-Max-Age", "5173");
-//                response.setHeader("Access-Control-Allow-Headers", "*");
             }
         }
 
