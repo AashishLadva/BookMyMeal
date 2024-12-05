@@ -21,7 +21,7 @@ const CancelMeal = ({ selectedDate, onCancel, mealType }) => {
       }
     } else {
       if (
-        todayDateTime.isAfter(todayDateTime.hour(12).minute(0)) &&
+        todayDateTime.isAfter(todayDateTime.hour(15).minute(0)) &&
         selectedDate.isSame(todayDateTime, "day")
       ) {
         return false;

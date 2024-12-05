@@ -4,11 +4,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import BookMeal from "./BookMeal";
 import "animate.css";
 import Button from "../Components/Button";
-import Calender from "./Calender";
+import Calender from "../Components/Calender";
 import { FaLocationDot } from "react-icons/fa6";
 import dayjs from "dayjs";
 import ViewBookings from "./ViewBookings";
-import CancelMeal from "./CancelMeal";
+import CancelMeal from "../Components/CancelMeal";
 import MealOfTheDay from "./MealOfTheDay";
 import QuickMeal from "./QuickMeal";
 import axios from "axios";
@@ -18,6 +18,8 @@ import QrCode from "./QrCode";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { toastStyle } from "../Constants/general";
+import { API_URLS } from "../Apis/endpoint";
+
 
 const Home = () => {
   const todayDateTime = dayjs();
@@ -40,7 +42,7 @@ const Home = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          "http://localhost:8080/meal-booking/getHolidays",
+          API_URLS.FETCH_HOLIDAYS,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -77,7 +79,7 @@ const Home = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8080/meal-booking/${id}/display-booking`,
+          API_URLS.DISPAL_BOOKING(id),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -161,9 +163,7 @@ const Home = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8080/coupons/${id}/${
-          hasLunch ? 1 : 2
-        }/${selectedDate.format("YYYY-MM-DD")}/getCouponDetails`,
+        API_URLS.GET_COUPON_DETAILS(id,hasLunch,selectedDate),
         {
           headers: {
             Authorization: `Bearer ${token}`,

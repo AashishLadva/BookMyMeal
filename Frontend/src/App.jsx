@@ -14,7 +14,7 @@ import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import About from "./Pages/About";
 import TermAndCondition from "./Pages/TermAndCondition";
 import ValidationsAndItemsProvider from "./Utils/ValidationsAndItemsProvider";
-import ProtectRoutes from "./Components/ProtectRoutes";
+import ProtectRoutes from "./ProtectRoutes";
 
 const App = () => {
   return (

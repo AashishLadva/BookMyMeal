@@ -144,7 +144,6 @@ const ValidationsAndItemsProvider = ({ children }) => {
         validateUserEmail,
         validatePassword,
         validateChangePassword,
-        
         navItems,
         isBookingDinner,
         isBookingLunch,

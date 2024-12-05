@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Spinner from "../Components/Spinner";
 import { useNavigate } from "react-router-dom";
+import { API_URLS } from "../Apis/endpoint";
 
 const MealOfTheDay = ({ selectedDate }) => {
   const [menu, setMenu] = useState([]);
@@ -17,7 +18,7 @@ const MealOfTheDay = ({ selectedDate }) => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8080/menu/${selectedDate.format("dddd")}/getMenu`,{
+         API_URLS.GET_MENU(selectedDate),{
             headers: {
               Authorization: `Bearer ${token}`,
             },

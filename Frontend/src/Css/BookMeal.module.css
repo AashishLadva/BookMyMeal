@@ -50,28 +50,6 @@
   background-repeat: no-repeat;
 }
 
- /* .MuiTypography-root {
-  font-size: 0.8rem !important;
-  padding: 1.2rem !important;
-  margin: 3px 5px;
-}
- .MuiPickersDay-root {
-  font-size: 0.96rem !important;
-  padding: 1.2rem !important;
-  margin: 3px 5px;
- 
-}
-
-.Mui-selected {
-  background-color: #d2194a !important;
-  color: white;
-}
-
- .MuiPickersCalendarHeader-root {
-  font-size: 18px;
-} */
-
-
 @media only screen and (max-width:575px){
     .mainn{
         width: 100%;

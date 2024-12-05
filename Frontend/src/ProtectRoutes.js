@@ -1,26 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
+import { contextProvider } from "./Utils/ValidationsAndItemsProvider";
 
 const ProtectRoutes = ({ children }) => {
   const navigate = useNavigate();
   const [isTokenValid, setIsTokenValid] = useState(null);
-  const {isAuthenticate} = useContext(contextProvider);
+  const { isAuthenticate } = useContext(contextProvider);
 
   useEffect(() => {
     const token = sessionStorage.getItem("authToken");
-    if (token) {
-      try {
-        if (isAuthenticate()) {
-          setIsTokenValid(true);
-        } else {
-          setIsTokenValid(false);
-          navigate("/login");
-        }
-      } catch (error) {
-        setIsTokenValid(false);
-        navigate("/login");
-      }
+    if (token && isAuthenticate()) {
+      setIsTokenValid(true);
     } else {
       setIsTokenValid(false);
       navigate("/login");
@@ -30,10 +20,6 @@ const ProtectRoutes = ({ children }) => {
   if (isTokenValid) {
     return children;
   }
-  return null;
 };
 
 export default ProtectRoutes;
-
-
-

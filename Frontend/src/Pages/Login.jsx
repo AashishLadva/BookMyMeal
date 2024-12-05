@@ -16,6 +16,7 @@ import { contextProvider } from "../Utils/ValidationsAndItemsProvider";
 import cookies from "js-cookie";
 import axios from "axios";
 import Spinner from "../Components/Spinner";
+import { API_URLS } from "../Apis/endpoint";
 
 const Login = () => {
   const { validateUserEmail, validatePassword } = useContext(contextProvider);
@@ -36,7 +37,7 @@ const Login = () => {
       setLoading(true);
       try {
         const response = await axios.post(
-          "http://localhost:8080/employees/login",
+          API_URLS.LOGIN,
           data
         );
         if (response.status === 200) {

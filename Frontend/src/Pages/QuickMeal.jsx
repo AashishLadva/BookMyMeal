@@ -10,6 +10,7 @@ import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import Spinner from "../Components/Spinner";
 import { useNavigate } from "react-router-dom";
+import { API_URLS } from "../Apis/endpoint";
 
 const QuickMeal = ({ closeQuickMeal, selectedDate,isWeekend }) => {
   const { isBookingDinner } =
@@ -37,7 +38,7 @@ const QuickMeal = ({ closeQuickMeal, selectedDate,isWeekend }) => {
           endDate: todayDateTime.format("YYYY-MM-DD"),
         };
         const response = await axios.post(
-          "http://localhost:8080/meal-booking/booking",
+          API_URLS.BOOK_MEAL,
           data,
           {
             headers: {

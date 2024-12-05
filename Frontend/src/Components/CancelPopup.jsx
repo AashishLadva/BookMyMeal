@@ -1,12 +1,13 @@
-import Button from "../Components/Button";
+import Button from "./Button";
 import React, { useContext, useState } from "react";
 import Styles from "../Css/CancelPopup.module.css";
 import axios from "axios";
 import cookie from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import { toastStyle } from "../Constants/general";
-import Spinner from "../Components/Spinner";
+import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
+import { API_URLS } from "../Apis/endpoint";
 
 const CancelPopup = ({
   handleCloseCancel,
@@ -24,9 +25,7 @@ const CancelPopup = ({
     try {
       setLoading(true);
       const response = await axios.post(
-        `http://localhost:8080/meal-booking/${id}/${
-          mealType === "LUNCH" ? 1 : 2
-        }/${selectedDate.format("YYYY-MM-DD")}/cancel-booking`,
+        API_URLS.CANCEL_BOOKING(id,mealType,selectedDate),
         {},
         {
           headers: {

@@ -5,9 +5,9 @@ import Button from "../Components/Button";
 import dayjs from "dayjs";
 
 function QrCode({ id, coupen, userName, stopQr, selectedDate }) {
-  const hasLunch = ()=>{
-    return dayjs().hour()<15;
-  }
+  const hasLunch = () => {
+    return dayjs().hour() < 15;
+  };
   return (
     <div
       className={`${Styles["qr-main"]} animate__animated animate__zoomIn animate__fast`}
@@ -30,18 +30,16 @@ function QrCode({ id, coupen, userName, stopQr, selectedDate }) {
         )}, MealType:${hasLunch() ? "Lunch" : "Dinner"}, coupen:${coupen} `}
         viewBox={`0 0 256 256`}
       />
-      <div>
-        <ul className="text-start mt-4">
-          <li>
-            <span>User Id:</span> {id}
-          </li>
-          <li>
-            <span>User Name:</span> {userName}
-          </li>
-          <li>
-            <span>Meal Type:</span> {hasLunch() ? "Lunch" : "Dinner"}
-          </li>
-        </ul>
+      <div className="text-center mt-3">
+        <div>
+          <span>User Name:</span> {userName}
+        </div>
+        <div>
+          <span>Meal Type:</span> {hasLunch() ? "Lunch" : "Dinner"}
+        </div>
+        <div>
+          <span>User Id:</span> {id}
+        </div>
       </div>
     </div>
   );

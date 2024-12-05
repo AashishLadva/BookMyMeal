@@ -1,0 +1,9 @@
+.footer {
+  background-image: url("../assets/banner.jpg");
+  background-size: cover;
+  color: white;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  padding: 20px 0px;
+  width: 100%;
+}

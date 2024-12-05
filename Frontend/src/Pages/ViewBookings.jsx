@@ -22,6 +22,7 @@ import "../Css/ViewBookingForCalender.css";
 import { toast } from "react-toastify";
 import { toastStyle } from "../Constants/general";
 import { useNavigate } from "react-router-dom";
+import { API_URLS } from "../Apis/endpoint";
 
 const ViewBookings = ({ closeViewBooking }) => {
   const todayDateTime = dayjs();
@@ -44,9 +45,7 @@ const ViewBookings = ({ closeViewBooking }) => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:8080/meal-booking/${id}/${
-            mealType === "Lunch" ? 1 : 2
-          }/view-booking`,{
+          API_URLS.VIEW_BOOKINGS(id,mealType),{
             headers: {
               Authorization: `Bearer ${token}`,
             },
