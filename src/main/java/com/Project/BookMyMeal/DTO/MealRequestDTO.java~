@@ -1,6 +1,0 @@
-package com.Project.BookMyMeal.DTO;
-
-public class MealRequestDTO {
-
-    
-}
