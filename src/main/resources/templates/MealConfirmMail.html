@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Booking Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .header h2 {
+            font-size: 18px;
+            margin: 0;
+            color: #333;
+        }
+
+        .content {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        .content h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .content p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .content .meal-booked {
+            display: inline-block;
+            background: #d6efff;
+            color: #46c43b;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <!-- Header -->
+    <div class="header">
+        <img src="cid:logoImage" alt="Logo">
+        <h2>Hello {{employeeName}},</h2>
+    </div>
+    <p>Thank you for using Rishabh's Meal App to book your meal.</p>
+
+    <!-- Content -->
+    <div class="content">
+        <h3>🍽️ Meal {{mealType}} Booked</h3>
+        <p><strong>{{startDate}}</strong> To <strong>{{endDate}}</strong></p>
+        <p class="meal-booked">Booked</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Thanks,<br>Meal Facility Team</p>
+    </div>
+</div>
+</body>
+</html>
