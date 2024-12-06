@@ -14,9 +14,9 @@ import { API_URLS } from "../Apis/endpoint";
 
 const ChangePassword = () => {
   const { validateChangePassword } = useContext(contextProvider);
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
-  const [oldPassword, setOldPassword] = useState();
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
   const { id } = JSON.parse(cookies.get("UserCookie"));
   const [loading, setLoading] = useState(false);
 
