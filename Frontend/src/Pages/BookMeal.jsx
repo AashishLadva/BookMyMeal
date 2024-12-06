@@ -21,8 +21,7 @@ import { useNavigate } from "react-router-dom";
 import {API_URLS} from '../Apis/endpoint'
 
 const BookMeal = ({ closePopUp,isWeekend }) => {
-  const {  isBookingDinner, isBookingLunch } =
-    useContext(contextProvider);
+  const {  isBookingDinner, isBookingLunch } = useContext(contextProvider);
   const [startDate, setStartDate] = useState(null);
   const [mealType, setMealType] = useState("Lunch");
   const [endDate, setEndDate] = useState(null);
