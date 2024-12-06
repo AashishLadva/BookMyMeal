@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -63,6 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
+                // Set the authentication token in the security context
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }

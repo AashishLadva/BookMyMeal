@@ -74,8 +74,7 @@ public class MealBookingController {
         try {
             List<BookingDTO> booking = mealBookingService.getBooking(employeeID);
             return new ResponseEntity<>(booking, HttpStatus.OK);
-        }
-        catch (ResponseStatusException ex) {
+        } catch (ResponseStatusException ex) {
             return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());
         } catch (RuntimeException ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);

@@ -11,7 +11,6 @@ CREATE TABLE employee (
     password VARCHAR(255)
 );
 
-
 -- Meals Table
 CREATE TABLE meals (
     id integer AUTO_INCREMENT PRIMARY KEY,
@@ -88,10 +87,6 @@ INSERT INTO Menu (day_of_week, meal_type, dish_name) VALUES
 ('Friday', 'DINNER', 'Lasaniya Chutney'),
 ('Friday', 'DINNER', 'Kadhi Khichdi');
 
-
-
-
-
 INSERT INTO Holidays (date) VALUES
     ('2024-01-26'),
     ('2024-08-15'),
@@ -103,13 +98,7 @@ INSERT INTO Holidays (date) VALUES
     ('2024-10-23'),
     ('2024-01-14');
 
-    
-select * from Holidays;
-
 -- drop table holidays; 
-
-
-
 -- drop table meal_bookings; 
 -- drop table meal_booking_dates;
 -- drop table meals;
@@ -122,50 +111,4 @@ select * from meal_booking_dates;
 select * from meal_bookings;
 select * from employee;
 select * from menu;
-
-update meals set meal_type="DINNER" where meal_type="dinner";
-
-insert into meals (meal_type) values ("LUNCH"),("DINNER");
-
-select * from meals;
-
-
-
-truncate table meals;
-
-show tables;
-
-select * from meal_booking_dates;
-
-INSERT INTO employee (name, email, role, DOJ, password) 
-VALUES ('Aashish', 'aashish@example.com', 'Software Engineer', '2024-02-02', 'Aas@12345');
-
-update employee set email = "aashishladva@gmail.com" where id=1;
-
-SELECT * FROM employee;
-
-
--- Meal Bookings Table
-CREATE TABLE meal_bookings (
-    id integer AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for the booking
-    employee_id bigint NOT NULL, -- ID of the employee making the booking
-    meal_id integer NOT NULL, -- ID of the meal type (e.g., breakfast, lunch, dinner)
-    status ENUM('ACTIVE', 'CANCELLED') DEFAULT 'ACTIVE', -- Booking status
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for creation
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Timestamp for updates
-    FOREIGN KEY (employee_id) REFERENCES employee(id) ON DELETE CASCADE, -- Ensure referential integrity
-    FOREIGN KEY (meal_id) REFERENCES meals(id) ON DELETE CASCADE -- Ensure referential integrity
-);
-
-CREATE TABLE meal_booking_dates (
-    id integer AUTO_INCREMENT PRIMARY KEY, -- Unique identifier for each booking date
-    booking_id integer NOT NULL, -- References the meal_bookings table
-    booking_date DATE NOT NULL, -- Specific date for the meal
-    coupon_code VARCHAR(255) UNIQUE NOT NULL, -- Unique coupon for each date
-    status ENUM('BOOKED', 'CANCELLED') DEFAULT 'BOOKED', -- Date-specific booking status
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp for creation
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Timestamp for updates
-    FOREIGN KEY (booking_id) REFERENCES meal_bookings(id) ON DELETE CASCADE, -- Ensure referential integrity
-    UNIQUE (booking_id, booking_date) -- Prevent duplicate dates for the same booking
-);
-
+select * from Holidays;

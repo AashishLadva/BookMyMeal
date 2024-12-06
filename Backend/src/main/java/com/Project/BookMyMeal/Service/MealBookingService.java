@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class MealBookingService {
@@ -59,41 +60,9 @@ public class MealBookingService {
                     employee.getId(), meal.getId(), currentDate).orElse(null);
 
             if (existingBooking != null) {
-                if (existingBooking.getStatus() == MealBooking.BookingStatus.CANCELLED) {
-                    // Status change: Update from CANCELLED to BOOKED
-                    existingBooking.setStatus(MealBooking.BookingStatus.BOOKED);
-
-                    // Generate a unique coupon code if needed
-                    String newCouponCode;
-                    do {
-                        newCouponCode = CouponCodeGenerator.generateCouponCode();
-                    } while (mealBookingRepository.existsByCouponCode(newCouponCode));
-
-                    existingBooking.setCouponCode(newCouponCode);
-                    mealBookingRepository.save(existingBooking);
-                    isBookingSuccessful = true;
-                } else {
-                    throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                            "Meal for this date is already booked!");
-                }
+                isBookingSuccessful = existsAndIsBookedSuccessfully(existingBooking);
             } else {
-                if (!isWeekend(currentDate) && !isHoliday(currentDate)) {
-                    // Create a new booking
-                    String couponCode;
-                    do {
-                        couponCode = CouponCodeGenerator.generateCouponCode();
-                    } while (mealBookingRepository.existsByCouponCode(couponCode));
-
-                    MealBooking mealBooking = new MealBooking();
-                    mealBooking.setEmployee(employee);
-                    mealBooking.setMeal(meal);
-                    mealBooking.setBookingDate(currentDate);
-                    mealBooking.setCouponCode(couponCode);
-                    mealBooking.setStatus(MealBooking.BookingStatus.BOOKED);
-
-                    mealBookingRepository.save(mealBooking);
-                    isBookingSuccessful = true;
-                }
+                isBookingSuccessful = isBookingSuccessful(currentDate, employee, meal, isBookingSuccessful);
             }
 
             currentDate = currentDate.plusDays(1);
@@ -101,22 +70,77 @@ public class MealBookingService {
 
         if (isBookingSuccessful) {
             String subject = "Meal Booking Confirmation";
-            String body = String.format(
-                    "Your meal '%s' has been successfully booked for the date range: %s - %s.",
-                    meal.getMealType(), startDate, endDate);
+
+            // Cast all values explicitly to String
+            Map<String, String> placeholders = Map.of(
+                    "employeeName", String.valueOf(employee.getName()),
+                    "startDate", String.valueOf(startDate),
+                    "endDate", String.valueOf(endDate),
+                    "mealType", String.valueOf(meal.getMealType())
+            );
 
             try {
-                emailService.sendEmail(employee.getEmail(), subject, body);
-            } catch (MessagingException e) {
+                emailService.sendEmailWithTemplate(employee.getEmail(), subject, placeholders);
+            } catch (Exception e) {
                 System.err.println("Failed to send booking confirmation email: " + e.getMessage());
             }
         }
+    }
+
+    private boolean isBookingSuccessful(LocalDate currentDate, Employee employee, Meal meal, boolean isBookingSuccessful) {
+        if (!isWeekend(currentDate) && !isHoliday(currentDate)) {
+            // Create a new booking
+            String couponCode = Stream.generate(CouponCodeGenerator::generateCouponCode)
+                    .filter(code -> !mealBookingRepository.existsByCouponCode(code))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Unable to generate a unique coupon code"));
+
+
+            MealBooking mealBooking = new MealBooking();
+            mealBooking.setEmployee(employee);
+            mealBooking.setMeal(meal);
+            mealBooking.setBookingDate(currentDate);
+            mealBooking.setCouponCode(couponCode);
+            mealBooking.setStatus(MealBooking.BookingStatus.BOOKED);
+
+            mealBookingRepository.save(mealBooking);
+            isBookingSuccessful = true;
+        }
+        return isBookingSuccessful;
+    }
+
+    private boolean existsAndIsBookedSuccessfully(MealBooking existingBooking) {
+        boolean isBookingSuccessful;
+        if (existingBooking.getStatus() == MealBooking.BookingStatus.CANCELLED) {
+            // Status change: Update from CANCELLED to BOOKED
+            existingBooking.setStatus(MealBooking.BookingStatus.BOOKED);
+
+            // Generate a unique coupon code if needed
+            String newCouponCode = Stream.generate(CouponCodeGenerator::generateCouponCode)
+                    .filter(code -> !mealBookingRepository.existsByCouponCode(code))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Unable to generate a unique coupon code"));
+
+
+            existingBooking.setCouponCode(newCouponCode);
+            mealBookingRepository.save(existingBooking);
+            isBookingSuccessful = true;
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Meal for this date is already booked!");
+        }
+        return isBookingSuccessful;
     }
 
     @Transactional
     public void cancelBooking(Long employeeId, Integer mealId, LocalDate date) {
         MealBooking mealBooking = mealBookingRepository.findByEmployee_IdAndMeal_IdAndBookingDate(employeeId, mealId, date)
                 .orElseThrow(() -> new RuntimeException("Booking not found for the specific date."));
+
+        Employee employee = mealBooking.getEmployee();
+
+        Meal meal = mealRepository.findById(mealId)
+                .orElseThrow(() -> new RuntimeException("Meal not found"));
 
         if (mealBooking.getStatus() == MealBooking.BookingStatus.CANCELLED) {
             throw new IllegalStateException("Meal is not found for this date.");
@@ -125,15 +149,19 @@ public class MealBookingService {
         mealBooking.setStatus(MealBooking.BookingStatus.CANCELLED);
         mealBookingRepository.save(mealBooking);
 
-        String userEmail = mealBooking.getEmployee().getEmail();
-        String mealName = String.valueOf(mealBooking.getMeal().getMealType());
         String subject = "Meal Booking Cancellation";
-        String body = String.format("Your meal booking for '%s' on %s has been successfully canceled.", mealName, date);
+
+        // Cast all values explicitly to String
+        Map<String, String> placeholders = Map.of(
+                "employeeName", String.valueOf(employee.getName()),
+                "cancellationDate", String.valueOf(date),
+                "mealType", String.valueOf(meal.getMealType())
+        );
 
         try {
-            emailService.sendEmail(userEmail, subject, body);
-        } catch (MessagingException e) {
-            System.err.println("Failed to send email: " + e.getMessage());
+            emailService.sendEmailWithTemplate(employee.getEmail(), subject, placeholders);
+        } catch (Exception e) {
+            System.err.println("Failed to send booking confirmation email: " + e.getMessage());
         }
     }
 
@@ -155,6 +183,7 @@ public class MealBookingService {
         // Return the list of booking dates
         return bookingDates;
     }
+
 
     public List<BookingDTO> getBooking(Long employeeId) {
 
