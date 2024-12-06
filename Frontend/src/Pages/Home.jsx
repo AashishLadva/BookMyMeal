@@ -183,6 +183,11 @@ const Home = () => {
     }
   };
 
+  const showMealComonent = ()=>{
+    return selectedDate.isBefore(dayjs().add(7,"day"));
+  }
+  
+
   return (
     <>
       {openViewBooking && (
@@ -255,7 +260,8 @@ const Home = () => {
                 stopQr={() => setShowQr(false)}
               />
             )}
-            <MealOfTheDay selectedDate={selectedDate} />
+            {showMealComonent() && <MealOfTheDay selectedDate={selectedDate} />}
+           
           </div>
         </div>
         {quickAddMeal() && (
