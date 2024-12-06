@@ -20,7 +20,6 @@ import { useNavigate } from "react-router-dom";
 import { toastStyle } from "../Constants/general";
 import { API_URLS } from "../Apis/endpoint";
 
-
 const Home = () => {
   const todayDateTime = dayjs();
   const [openPopUp, setOpenPopUp] = useState(false);
@@ -41,14 +40,11 @@ const Home = () => {
     const fetchHoliday = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          API_URLS.FETCH_HOLIDAYS,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(API_URLS.FETCH_HOLIDAYS, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const result = await response.json();
         if (response.status === 200) {
           const holidayDates = result.map((item) => dayjs(item));
@@ -78,14 +74,11 @@ const Home = () => {
     const fetchMealBookings = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          API_URLS.DISPAL_BOOKING(id),
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(API_URLS.DISPAL_BOOKING(id), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.status === 200) {
           setBookedDate(
             response.data.map((item) => ({
@@ -97,9 +90,9 @@ const Home = () => {
       } catch (error) {
         if (error.response.status === 401) {
           toast.error("Session Timeout Please Login Again", toastStyle);
-          setTimeout(()=>{
+          setTimeout(() => {
             navigate("/login");
-          },1500);
+          }, 1500);
         }
       } finally {
         setLoading(false);
@@ -127,43 +120,45 @@ const Home = () => {
   const quickAddMeal = () => {
     return (
       selectedDate.isSame(todayDateTime, "day") &&
-      todayDateTime.isAfter(todayDateTime.hour(10).minute(0))&&
+      todayDateTime.isAfter(todayDateTime.hour(10).minute(0)) &&
       todayDateTime.isBefore(todayDateTime.hour(15).minute(0)) &&
       !isWeekend(selectedDate)
     );
   };
 
   const showQrButtonVisible = () => {
-    if (hasLunch && hasDinner) {
+    const isWithinTimeRange = (startHour, startMinute, endHour, endMinute) => {
       return (
-        (selectedDate.isSame(todayDateTime, "day") &&
-          todayDateTime.isAfter(todayDateTime.hour(12).minute(0)) &&
-          todayDateTime.isBefore(todayDateTime.hour(15).minute(0))) ||
-        (selectedDate.isSame(todayDateTime, "day") &&
-          todayDateTime.isAfter(todayDateTime.hour(20).minute(0)) &&
-          todayDateTime.isBefore(todayDateTime.hour(22).minute(0)))
+        todayDateTime.isAfter(
+          todayDateTime.hour(startHour).minute(startMinute)
+        ) &&
+        todayDateTime.isBefore(todayDateTime.hour(endHour).minute(endMinute))
       );
-    } else if (hasLunch) {
-      return (
-        selectedDate.isSame(todayDateTime, "day") &&
-        todayDateTime.isAfter(todayDateTime.hour(12).minute(0)) &&
-        todayDateTime.isBefore(todayDateTime.hour(15).minute(0))
-      );
-    } else if (hasDinner) {
-      return (
-        selectedDate.isSame(todayDateTime, "day") &&
-        todayDateTime.isAfter(todayDateTime.hour(20).minute(0)) &&
-        todayDateTime.isBefore(todayDateTime.hour(22).minute(0))
-      );
+    };
+
+    if (!selectedDate.isSame(todayDateTime, "day")) {
+      return false;
     }
-    return false;
+
+    switch (true) {
+      case hasLunch && hasDinner:
+        return (
+          isWithinTimeRange(12, 0, 15, 0) || isWithinTimeRange(20, 0, 22, 0)
+        );
+      case hasLunch:
+        return isWithinTimeRange(12, 0, 15, 0);
+      case hasDinner:
+        return isWithinTimeRange(20, 0, 22, 0);
+      default:
+        return false;
+    }
   };
 
   const fetchQr = async () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        API_URLS.GET_COUPON_DETAILS(id,hasLunch,selectedDate),
+        API_URLS.GET_COUPON_DETAILS(id, hasLunch, selectedDate),
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -177,13 +172,11 @@ const Home = () => {
     } catch (error) {
       if (error.response.status === 401) {
         toast.error("Session Timeout Please Login Again", toastStyle);
-        setTimeout(()=>{
+        setTimeout(() => {
           navigate("/login");
-        },1500);
-      } else if (error.response) {
-        toast.error(error.response?.data || error.message, toastStyle);
+        }, 1500);
       } else {
-        toast.error(error.message, toastStyle);
+        toast.error(error.response?.data || error.message, toastStyle);
       }
     } finally {
       setLoading(false);

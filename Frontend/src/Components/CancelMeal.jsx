@@ -10,25 +10,19 @@ const CancelMeal = ({ selectedDate, onCancel, mealType }) => {
   const todayDateTime = dayjs();
   const cancelBtnAvailable = () => {
     if (mealType === "LUNCH") {
-      if (
+      return !(
         (selectedDate.isSame(todayDateTime.add(1, "day"), "day") &&
-        todayDateTime.isAfter(todayDateTime.hour(22).minute(0))) ||
+          todayDateTime.isAfter(todayDateTime.hour(22).minute(0))) ||
         selectedDate.isSame(todayDateTime, "day")
-      ) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      if (
+      );
+    }
+    if (mealType === "DINNER") {
+      return !(
         todayDateTime.isAfter(todayDateTime.hour(15).minute(0)) &&
         selectedDate.isSame(todayDateTime, "day")
-      ) {
-        return false;
-      } else {
-        return true;
-      }
+      );
     }
+    return false;
   };
 
   return (

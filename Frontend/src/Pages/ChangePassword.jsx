@@ -13,8 +13,7 @@ import Spinner from "../Components/Spinner";
 import { API_URLS } from "../Apis/endpoint";
 
 const ChangePassword = () => {
-  const { validateChangePassword } =
-    useContext(contextProvider);
+  const { validateChangePassword } = useContext(contextProvider);
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
   const [oldPassword, setOldPassword] = useState();

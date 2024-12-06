@@ -1,8 +1,6 @@
 .calendar-container {
   display: flex !important;
-  font-size: 18px;
   padding: 20px;
-  height: 60vh;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -22,8 +20,3 @@
   background-color: #d2194a !important;
   color: white;
 }
-
-.MuiPickersCalendarHeader-root {
-  font-size: 18px;
-}
-
