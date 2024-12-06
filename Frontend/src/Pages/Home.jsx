@@ -184,7 +184,7 @@ const Home = () => {
   };
 
   const showMealComonent = ()=>{
-    return selectedDate.isBefore(dayjs().add(7,"day"));
+    return selectedDate.isBefore(todayDateTime.add(7,"day"));
   }
   
 
