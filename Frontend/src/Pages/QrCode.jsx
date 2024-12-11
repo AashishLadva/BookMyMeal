@@ -4,7 +4,7 @@ import QRCode from "react-qr-code";
 import Button from "../Components/Button";
 import dayjs from "dayjs";
 
-function QrCode({ id, coupen, userName, stopQr, selectedDate }) {
+const QrCode = ({ id, coupen, userName, stopQr, selectedDate }) => {
   const hasLunch = () => {
     return dayjs().hour() < 15;
   };
@@ -43,6 +43,6 @@ function QrCode({ id, coupen, userName, stopQr, selectedDate }) {
       </div>
     </div>
   );
-}
+};
 
 export default QrCode;

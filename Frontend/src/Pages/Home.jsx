@@ -121,7 +121,7 @@ const Home = () => {
     return (
       selectedDate.isSame(todayDateTime, "day") &&
       todayDateTime.isAfter(todayDateTime.hour(10).minute(0)) &&
-      todayDateTime.isBefore(todayDateTime.hour(15).minute(0)) &&
+      todayDateTime.isBefore(todayDateTime.hour(15).minute(0)) ||
       !isWeekend(selectedDate)
     );
   };
@@ -215,7 +215,6 @@ const Home = () => {
               isWeekend={isWeekend}
               handleOnChange1={(date) => setselectedDate(date)}
               bookedDate={bookedDate}
-              hasLunch={hasLunch}
             />
           </div>
           <div className="col-md-6">

@@ -39,7 +39,6 @@ const ViewBookings = ({ closeViewBooking }) => {
   const [showMonth, setShowMonth] = useState(dayjs().month());
   const token = sessionStorage.getItem("authToken");
   const navigate =useNavigate();
-
   
     const fetchMealBookings = async () => {
       setLoading(true);

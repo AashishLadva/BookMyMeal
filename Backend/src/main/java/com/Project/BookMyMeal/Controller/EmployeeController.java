@@ -61,7 +61,7 @@ public class EmployeeController {
 
                     return ResponseEntity.ok(response);
                 } else {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Employee not found");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found");
                 }
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");

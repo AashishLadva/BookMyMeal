@@ -117,9 +117,8 @@ const isAuthenticate = () => {
   }
 
   try {
-    const decodedToken = jwtDecode(token);
+    const decodedToken = jwtDecode(token);  
     const currentTime = Math.round(Date.now() / 1000);
-    
     if (decodedToken.exp > currentTime) {
       return true;
     } else {

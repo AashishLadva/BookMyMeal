@@ -3,7 +3,6 @@ package com.Project.BookMyMeal.Controller;
 import com.Project.BookMyMeal.DTO.BookingDTO;
 import com.Project.BookMyMeal.DTO.MealRequestDTO;
 import com.Project.BookMyMeal.Service.MealBookingService;
-import com.Project.BookMyMeal.Util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,9 +20,6 @@ public class MealBookingController {
 
     @Autowired
     private MealBookingService mealBookingService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     @PostMapping("/booking")
     public ResponseEntity<?> bookMeal(@RequestBody MealRequestDTO bookingRequest) {

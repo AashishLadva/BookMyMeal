@@ -51,7 +51,7 @@ const MealOfTheDay = ({ selectedDate }) => {
 
   return (
     <>
-    <div className="text-start mx-2 my-3">
+    <div className="text-start mx-2 my-3 animate__animated animate__fadeIn">
       <h5>Meal of the day</h5>
       <div className={`${Styles.food} row text-light`}>
         <div className="col-6">

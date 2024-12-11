@@ -78,6 +78,7 @@ const Login = () => {
   useEffect(() => {
     document.body.style.overflow = "auto";
   }, [location]);
+  
   useEffect(() => {
     if (location.pathname === "/login") {
       cookies.remove("UserCookie");
