@@ -119,10 +119,10 @@ const Home = () => {
   const { hasLunch, hasDinner, mealsForSelectedDate } = CancelMealShow();
   const quickAddMeal = () => {
     return (
-      selectedDate.isSame(todayDateTime, "day") &&
+      !isWeekend(selectedDate) &&
       todayDateTime.isAfter(todayDateTime.hour(10).minute(0)) &&
-      todayDateTime.isBefore(todayDateTime.hour(15).minute(0)) ||
-      !isWeekend(selectedDate)
+      todayDateTime.isBefore(todayDateTime.hour(15).minute(0)) &&
+      selectedDate.isSame(todayDateTime, "day")
     );
   };
 
@@ -183,10 +183,9 @@ const Home = () => {
     }
   };
 
-  const showMealComonent = ()=>{
-    return selectedDate.isBefore(todayDateTime.add(7,"day"));
-  }
-  
+  const showMealComonent = () => {
+    return selectedDate.isBefore(todayDateTime.add(7, "day"));
+  };
 
   return (
     <>
@@ -260,7 +259,6 @@ const Home = () => {
               />
             )}
             {showMealComonent() && <MealOfTheDay selectedDate={selectedDate} />}
-           
           </div>
         </div>
         {quickAddMeal() && (
